@@ -59,10 +59,11 @@ rule all:
         # expand(gene_files, sample = samples),
         # expand(transcript_files, sample = samples),
         expand(gene_filtered_files, sample = samples, species = species),
-        expand(transcript_filtered_files, sample = samples, species = species)
+        expand(transcript_filtered_files, sample = samples, species = species),
         # expand(fastq_1, sample=samples),
         # expand(fastq_2, sample=samples),
-        # expand(gene_bam, sample=samples),
+        expand(gene_bam, sample=samples),
+        expand(tx_bam_sorted, sample=samples)
         # expand(tx_bam,  sample=samples),
         # expand(chim, sample=samples),
         # expand(log_final, sample=samples),

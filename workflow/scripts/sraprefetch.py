@@ -8,7 +8,9 @@ sra_file  = snakemake.output[0]
 json 	= load(open(json_file))
 sra_run = json["RUN_accession"]
 
-prefetch = cmd %(sra_run, sra_file)
+prefetch_str = " %s -o %s"
+
+prefetch = cmd + prefetch_str %(sra_run, sra_file)
 
 print(prefetch)
 shell(prefetch)

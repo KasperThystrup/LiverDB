@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Creating conda environment workflow/envs/star.yaml...
+Downloading and installing remote packages.
+Environment for workflow/envs/star.yaml created (location: .snakemake/conda/fd596e9f)
+Creating conda environment workflow/envs/sra_tools.yaml...
+Downloading and installing remote packages.
+CreateCondaEnvironmentException:
+Could not create conda environment from /home/kasper/Git_repositories/LiverDB/workflow/envs/sra_tools.yaml:
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... 
+Found conflicts! Looking for incompatible packages.
+This can take several minutes.  Press CTRL-C to abort.
+failed
+
+ResolvePackageNotFound: 
+  - hdf5[version='>=1.10.5,<1.10.6.0a0']
+
+
+  File "/home/kasper/miniconda3/lib/python3.7/site-packages/snakemake/deployment/conda.py", line 334, in create

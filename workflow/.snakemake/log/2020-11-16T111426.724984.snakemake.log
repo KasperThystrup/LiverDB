@@ -1,0 +1,32 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	zero_intolerance
+	2
+
+[Mon Nov 16 11:14:26 2020]
+rule zero_intolerance:
+    input: results/Rawdata/Counts/9606/SRR12845350_genes.tsv, results/Rawdata/Counts/9606/SRR12845350_transcripts.tsv
+    output: results/Filetered_counts/9606/Samples/SRR12845350_gene_count.tsv, results/Filetered_counts/9606/Samples/SRR12845350_transcript_count.tsv
+    jobid: 1
+    wildcards: species=9606, sample=SRR12845350
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/db72b297
+[Mon Nov 16 11:14:34 2020]
+Finished job 1.
+1 of 2 steps (50%) done
+
+[Mon Nov 16 11:14:34 2020]
+localrule all:
+    input: results/Filetered_counts/9606/Samples/SRR12845350_gene_count.tsv, results/Filetered_counts/9606/Samples/SRR8094770_gene_count.tsv, results/Filetered_counts/9606/Samples/SRR12845350_transcript_count.tsv, results/Filetered_counts/9606/Samples/SRR8094770_transcript_count.tsv
+    jobid: 0
+
+[Mon Nov 16 11:14:34 2020]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-16T111426.724984.snakemake.log

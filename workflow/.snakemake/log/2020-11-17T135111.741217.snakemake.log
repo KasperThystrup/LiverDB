@@ -1,0 +1,201 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	8	STAR_align
+	1	all
+	8	count_reads
+	8	fastqdump
+	8	srafetch
+	8	tx_sort
+	8	zero_intolerance
+	49
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045522.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045522.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045522.srafetch.log
+    jobid: 51
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045522.srafetch.bench
+    wildcards: sample=SRR1045522
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045525.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045525.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045525.srafetch.log
+    jobid: 54
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045525.srafetch.bench
+    wildcards: sample=SRR1045525
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR5750514.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR5750514.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR5750514.srafetch.log
+    jobid: 49
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR5750514.srafetch.bench
+    wildcards: sample=SRR5750514
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045524.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045524.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045524.srafetch.log
+    jobid: 53
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045524.srafetch.bench
+    wildcards: sample=SRR1045524
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045523.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045523.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045523.srafetch.log
+    jobid: 52
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045523.srafetch.bench
+    wildcards: sample=SRR1045523
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045526.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045526.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045526.srafetch.log
+    jobid: 55
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045526.srafetch.bench
+    wildcards: sample=SRR1045526
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR5750521.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR5750521.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR5750521.srafetch.log
+    jobid: 50
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR5750521.srafetch.bench
+    wildcards: sample=SRR5750521
+
+[Tue Nov 17 13:51:11 2020]
+rule srafetch:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045527.json
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045527.sra
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045527.srafetch.log
+    jobid: 56
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045527.srafetch.bench
+    wildcards: sample=SRR1045527
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Tue Nov 17 13:52:18 2020]
+Finished job 51.
+1 of 49 steps (2%) done
+
+[Tue Nov 17 13:52:18 2020]
+rule fastqdump:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045522.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045522.sra
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045522_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045522_2.fastq
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045522.fastqdump.log
+    jobid: 43
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045522.fastqdump.bench
+    wildcards: sample=SRR1045522
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Tue Nov 17 13:52:26 2020]
+Finished job 55.
+2 of 49 steps (4%) done
+
+[Tue Nov 17 13:52:26 2020]
+rule fastqdump:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045526.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045526.sra
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045526_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045526_2.fastq
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045526.fastqdump.log
+    jobid: 47
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045526.fastqdump.bench
+    wildcards: sample=SRR1045526
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Tue Nov 17 13:52:44 2020]
+Finished job 54.
+3 of 49 steps (6%) done
+
+[Tue Nov 17 13:52:44 2020]
+rule fastqdump:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045525.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045525.sra
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045525_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045525_2.fastq
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045525.fastqdump.log
+    jobid: 46
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045525.fastqdump.bench
+    wildcards: sample=SRR1045525
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Tue Nov 17 13:52:56 2020]
+Finished job 52.
+4 of 49 steps (8%) done
+
+[Tue Nov 17 13:52:56 2020]
+rule fastqdump:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045523.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045523.sra
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045523_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045523_2.fastq
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045523.fastqdump.log
+    jobid: 44
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045523.fastqdump.bench
+    wildcards: sample=SRR1045523
+
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045522.sra.
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Tue Nov 17 13:52:57 2020]
+Finished job 43.
+5 of 49 steps (10%) done
+[Tue Nov 17 13:53:03 2020]
+Finished job 56.
+6 of 49 steps (12%) done
+
+[Tue Nov 17 13:53:03 2020]
+rule fastqdump:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045527.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045527.sra
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045527_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045527_2.fastq
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045527.fastqdump.log
+    jobid: 48
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045527.fastqdump.bench
+    wildcards: sample=SRR1045527
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045526.sra.
+[Tue Nov 17 13:53:07 2020]
+Finished job 47.
+7 of 49 steps (14%) done
+[Tue Nov 17 13:53:32 2020]
+Finished job 53.
+8 of 49 steps (16%) done
+
+[Tue Nov 17 13:53:32 2020]
+rule fastqdump:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045524.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045524.sra
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045524_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045524_2.fastq
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045524.fastqdump.log
+    jobid: 45
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045524.fastqdump.bench
+    wildcards: sample=SRR1045524
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045525.sra.
+[Tue Nov 17 13:53:56 2020]
+Finished job 46.
+9 of 49 steps (18%) done
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045523.sra.
+[Tue Nov 17 13:54:03 2020]
+Finished job 44.
+10 of 49 steps (20%) done
+Will exit after finishing currently running jobs.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/SRA/SRR1045527.sra.
+[Tue Nov 17 13:54:19 2020]
+Finished job 48.
+11 of 49 steps (22%) done
+Will exit after finishing currently running jobs.

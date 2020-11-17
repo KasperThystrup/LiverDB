@@ -1,0 +1,3 @@
+NameError in line 244 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+name 'threads' is not defined
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 244, in <module>

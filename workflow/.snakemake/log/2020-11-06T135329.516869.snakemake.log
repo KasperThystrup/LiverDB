@@ -1,0 +1,55 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	2	STAR_align
+	1	all
+	2	count_reads
+	2	tx_sort
+	7
+
+[Fri Nov  6 13:53:29 2020]
+rule STAR_align:
+    input: results/Metadata/SRR8094770.json, results/Rawdata/Fastq/SRR8094770_1.fastq, results/Rawdata/Fastq/SRR8094770_2.fastq
+    output: results/Rawdata/Aligned/SRR8094770_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR8094770_Aligned.toTranscriptome.out.bam, results/Rawdata/Aligned/SRR8094770_Chimeric.out.junction, results/Rawdata/Aligned/log/SRR8094770_Log.final.out, results/Rawdata/Aligned/log/SRR8094770_Log.out, results/Rawdata/Aligned/log/SRR8094770_Log.progress.out, results/Rawdata/Aligned/SRR8094770_SJ.out.tab
+    log: info/logs/SRR8094770.star_align.log
+    jobid: 7
+    benchmark: info/benchmark/SRR8094770.star_align.bench
+    wildcards: sample=SRR8094770
+    threads: 4
+
+[Fri Nov  6 13:53:29 2020]
+rule STAR_align:
+    input: results/Metadata/SRR12845350.json, results/Rawdata/Fastq/SRR12845350_1.fastq, results/Rawdata/Fastq/SRR12845350_2.fastq
+    output: results/Rawdata/Aligned/SRR12845350_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR12845350_Aligned.toTranscriptome.out.bam, results/Rawdata/Aligned/SRR12845350_Chimeric.out.junction, results/Rawdata/Aligned/log/SRR12845350_Log.final.out, results/Rawdata/Aligned/log/SRR12845350_Log.out, results/Rawdata/Aligned/log/SRR12845350_Log.progress.out, results/Rawdata/Aligned/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log
+    jobid: 4
+    benchmark: info/benchmark/SRR12845350.star_align.bench
+    wildcards: sample=SRR12845350
+    threads: 4
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 145 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Rawdata/Aligned/log/SRR12845350_Log.final.out
+results/Rawdata/Aligned/log/SRR12845350_Log.out
+results/Rawdata/Aligned/log/SRR12845350_Log.progress.out
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Removing output files of failed job STAR_align since they might be corrupted:
+results/Rawdata/Aligned/SRR12845350_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR12845350_Aligned.toTranscriptome.out.bam, results/Rawdata/Aligned/SRR12845350_Chimeric.out.junction, results/Rawdata/Aligned/SRR12845350_SJ.out.tab
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 145 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Rawdata/Aligned/log/SRR8094770_Log.final.out
+results/Rawdata/Aligned/log/SRR8094770_Log.out
+results/Rawdata/Aligned/log/SRR8094770_Log.progress.out
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Removing output files of failed job STAR_align since they might be corrupted:
+results/Rawdata/Aligned/SRR8094770_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR8094770_Aligned.toTranscriptome.out.bam, results/Rawdata/Aligned/SRR8094770_Chimeric.out.junction, results/Rawdata/Aligned/SRR8094770_SJ.out.tab
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-06T135329.516869.snakemake.log

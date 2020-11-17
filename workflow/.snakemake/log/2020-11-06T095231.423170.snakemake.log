@@ -1,0 +1,3 @@
+NameError in line 172 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+name 'samtools' is not defined
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 172, in <module>

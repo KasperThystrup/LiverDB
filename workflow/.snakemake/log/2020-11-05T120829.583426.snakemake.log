@@ -1,0 +1,81 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	fastqdump
+	2	metadata
+	2	srafetch
+	7
+
+[Thu Nov  5 12:08:29 2020]
+rule metadata:
+    output: results/Metadata/SRR8094770.json
+    log: info/logs/SRR8094770.metadata.log
+    jobid: 5
+    benchmark: info/benchmark/SRR8094770.metadata.bench
+    wildcards: sample=SRR8094770
+    threads: 4
+
+[Thu Nov  5 12:08:29 2020]
+rule metadata:
+    output: results/Metadata/SRR12845350.json
+    log: info/logs/SRR12845350.metadata.log
+    jobid: 3
+    benchmark: info/benchmark/SRR12845350.metadata.bench
+    wildcards: sample=SRR12845350
+    threads: 4
+
+[Thu Nov  5 12:08:33 2020]
+Finished job 5.
+1 of 7 steps (14%) done
+
+[Thu Nov  5 12:08:33 2020]
+rule srafetch:
+    input: results/Metadata/SRR8094770.json
+    output: results/SRA/SRR8094770.sra
+    log: info/logs/SRR8094770.srafetch.log
+    jobid: 6
+    benchmark: info/benchmark/SRR8094770.srafetch.bench
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 12:08:34 2020]
+Finished job 3.
+2 of 7 steps (29%) done
+
+[Thu Nov  5 12:08:34 2020]
+rule srafetch:
+    input: results/Metadata/SRR12845350.json
+    output: results/SRA/SRR12845350.sra
+    log: info/logs/SRR12845350.srafetch.log
+    jobid: 4
+    benchmark: info/benchmark/SRR12845350.srafetch.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 12:08:50 2020]
+Finished job 4.
+3 of 7 steps (43%) done
+
+[Thu Nov  5 12:08:50 2020]
+rule fastqdump:
+    input: results/Metadata/SRR12845350.json, results/SRA/SRR12845350.sra
+    output: results/Fastq/SRR12845350_1.fq, results/Fastq/SRR12845350_2.fq
+    jobid: 1
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 12:08:50 2020]
+Error in rule fastqdump:
+    jobid: 1
+    output: results/Fastq/SRR12845350_1.fq, results/Fastq/SRR12845350_2.fq
+    shell:
+        scripts/fastq_dump.py
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Thu Nov  5 12:08:50 2020]
+Finished job 6.
+4 of 7 steps (57%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-05T120829.583426.snakemake.log

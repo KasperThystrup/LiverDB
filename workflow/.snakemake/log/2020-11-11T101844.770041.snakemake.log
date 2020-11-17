@@ -1,0 +1,35 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	count_reads
+	2
+
+[Wed Nov 11 10:18:44 2020]
+rule count_reads:
+    input: results/Metadata/SRR12845350.json, results/Rawdata/Aligned/SRR12845350_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR12845350_Aligned.toTranscriptome.sortedByCoord.out.bam
+    output: results/Rawdata/HTSeq_count/genes_SRR12845350.tsv, results/Rawdata/HTSeq_count/transcripts_SRR12845350.tsv
+    log: info/logs/SRR12845350.count_reads.log
+    jobid: 1
+    benchmark: info/benchmark/SRR12845350.count_reads.bench
+    wildcards: sample=SRR12845350
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Removing temporary output file results/Rawdata/Aligned/SRR12845350_Aligned.sortedByCoord.out.bam.
+Removing temporary output file results/Rawdata/Aligned/SRR12845350_Aligned.toTranscriptome.sortedByCoord.out.bam.
+[Wed Nov 11 10:35:52 2020]
+Finished job 1.
+1 of 2 steps (50%) done
+
+[Wed Nov 11 10:35:52 2020]
+localrule all:
+    input: results/Rawdata/HTSeq_count/genes_SRR12845350.tsv, results/Rawdata/HTSeq_count/genes_SRR8094770.tsv, results/Rawdata/HTSeq_count/transcripts_SRR12845350.tsv, results/Rawdata/HTSeq_count/transcripts_SRR8094770.tsv
+    jobid: 0
+
+[Wed Nov 11 10:35:52 2020]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-11T101844.770041.snakemake.log

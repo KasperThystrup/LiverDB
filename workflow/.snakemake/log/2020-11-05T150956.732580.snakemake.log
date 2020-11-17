@@ -1,0 +1,120 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	2	STAR_align
+	1	all
+	2	fastqdump
+	2	metadata
+	2	srafetch
+	9
+
+[Thu Nov  5 15:09:56 2020]
+rule metadata:
+    output: results/Metadata/SRR12845350.json
+    log: info/logs/SRR12845350.metadata.log
+    jobid: 3
+    benchmark: info/benchmark/SRR12845350.metadata.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:09:56 2020]
+rule metadata:
+    output: results/Metadata/SRR8094770.json
+    log: info/logs/SRR8094770.metadata.log
+    jobid: 5
+    benchmark: info/benchmark/SRR8094770.metadata.bench
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 15:10:00 2020]
+Finished job 3.
+1 of 9 steps (11%) done
+
+[Thu Nov  5 15:10:00 2020]
+rule srafetch:
+    input: results/Metadata/SRR12845350.json
+    output: results/SRA/SRR12845350.sra
+    log: info/logs/SRR12845350.srafetch.log
+    jobid: 7
+    benchmark: info/benchmark/SRR12845350.srafetch.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:10:00 2020]
+Finished job 5.
+2 of 9 steps (22%) done
+
+[Thu Nov  5 15:10:00 2020]
+rule srafetch:
+    input: results/Metadata/SRR8094770.json
+    output: results/SRA/SRR8094770.sra
+    log: info/logs/SRR8094770.srafetch.log
+    jobid: 8
+    benchmark: info/benchmark/SRR8094770.srafetch.bench
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 15:10:16 2020]
+Finished job 7.
+3 of 9 steps (33%) done
+
+[Thu Nov  5 15:10:16 2020]
+rule fastqdump:
+    input: results/Metadata/SRR12845350.json, results/SRA/SRR12845350.sra
+    output: results/Fastq/SRR12845350_1.fastq, results/Fastq/SRR12845350_2.fastq
+    log: info/logs/SRR12845350.fastqdump.log
+    jobid: 4
+    benchmark: info/benchmark/SRR12845350.fastqdump.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:10:17 2020]
+Finished job 8.
+4 of 9 steps (44%) done
+
+[Thu Nov  5 15:10:17 2020]
+rule fastqdump:
+    input: results/Metadata/SRR8094770.json, results/SRA/SRR8094770.sra
+    output: results/Fastq/SRR8094770_1.fastq, results/Fastq/SRR8094770_2.fastq
+    log: info/logs/SRR8094770.fastqdump.log
+    jobid: 6
+    benchmark: info/benchmark/SRR8094770.fastqdump.bench
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 15:10:33 2020]
+Finished job 4.
+5 of 9 steps (56%) done
+
+[Thu Nov  5 15:10:33 2020]
+rule STAR_align:
+    input: results/Metadata/SRR12845350.json, results/Fastq/SRR12845350_1.fastq, results/Fastq/SRR12845350_2.fastq
+    output: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log
+    jobid: 1
+    benchmark: info/benchmark/SRR12845350.star_align.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:10:33 2020]
+Error in rule STAR_align:
+    jobid: 1
+    output: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log (check log file(s) for error message)
+
+RuleException:
+CalledProcessError in line 146 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp5oazfevz.star_align.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 146, in __rule_STAR_align
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Terminating processes on user request, this might take some time.
+[Thu Nov  5 15:11:06 2020]
+Error in rule fastqdump:
+    jobid: 6
+    output: results/Fastq/SRR8094770_1.fastq, results/Fastq/SRR8094770_2.fastq
+    log: info/logs/SRR8094770.fastqdump.log (check log file(s) for error message)
+
+RuleException:
+CalledProcessError in line 116 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp_70tgl96.fastq_dump.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 116, in __rule_fastqdump
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Removing output files of failed job fastqdump since they might be corrupted:
+results/Fastq/SRR8094770_1.fastq
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-05T150956.732580.snakemake.log

@@ -1,0 +1,36 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	count_reads
+	2
+
+[Wed Nov 11 10:17:29 2020]
+rule count_reads:
+    input: results/Metadata/SRR12845350.json, results/Rawdata/Aligned/SRR12845350_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR12845350_Aligned.toTranscriptome.sortedByCoord.out.bam
+    output: results/Rawdata/HTSeq_count/genes_SRR12845350.tsv, results/Rawdata/HTSeq_count/transcripts_SRR12845350.tsv
+    log: info/logs/SRR12845350.count_reads.log
+    jobid: 1
+    benchmark: info/benchmark/SRR12845350.count_reads.bench
+    wildcards: sample=SRR12845350
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Terminating processes on user request, this might take some time.
+[Wed Nov 11 10:18:42 2020]
+Error in rule count_reads:
+    jobid: 1
+    output: results/Rawdata/HTSeq_count/genes_SRR12845350.tsv, results/Rawdata/HTSeq_count/transcripts_SRR12845350.tsv
+    log: info/logs/SRR12845350.count_reads.log (check log file(s) for error message)
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+
+RuleException:
+CalledProcessError in line 222 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048'; set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp1y_khlzf.count_reads.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 222, in __rule_count_reads
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Removing output files of failed job count_reads since they might be corrupted:
+results/Rawdata/HTSeq_count/genes_SRR12845350.tsv
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-11T101729.058985.snakemake.log

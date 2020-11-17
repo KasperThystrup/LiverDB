@@ -1,0 +1,9 @@
+name: liverDB
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - sra-tools = 2.10.8
+  - star = 2.7.6a
+  - samtools = 1.11
+  - htseq = 0.12.4

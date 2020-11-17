@@ -1,0 +1,58 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	metadata
+	2	srafetch
+	5
+
+[Thu Nov  5 10:41:38 2020]
+rule metadata:
+    output: results/Metadata/SRR8094770.json
+    log: info/logs/SRR8094770.metadata.log
+    jobid: 4
+    benchmark: info/benchmark/SRR8094770.metadata.bench
+    wildcards: sample=SRR8094770
+    threads: 4
+
+[Thu Nov  5 10:41:38 2020]
+rule metadata:
+    output: results/Metadata/SRR12845350.json
+    log: info/logs/SRR12845350.metadata.log
+    jobid: 3
+    benchmark: info/benchmark/SRR12845350.metadata.bench
+    wildcards: sample=SRR12845350
+    threads: 4
+
+[Thu Nov  5 10:41:42 2020]
+Finished job 3.
+1 of 5 steps (20%) done
+
+[Thu Nov  5 10:41:42 2020]
+rule srafetch:
+    input: results/Metadata/SRR12845350.json
+    output: results/SRA/SRR12845350.sra
+    log: info/logs/SRR12845350.srafetch.log
+    jobid: 1
+    benchmark: info/benchmark/SRR12845350.srafetch.bench
+    wildcards: sample=SRR12845350
+    threads: 4
+
+[Thu Nov  5 10:41:42 2020]
+Error in rule srafetch:
+    jobid: 1
+    output: results/SRA/SRR12845350.sra
+    log: info/logs/SRR12845350.srafetch.log (check log file(s) for error message)
+    shell:
+        /disk2/Resources/software/sratoolkit.2.10.5-centos_linux64/bin/prefetch.2.10.5 %s -o json.load(input)
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Thu Nov  5 10:41:42 2020]
+Finished job 4.
+2 of 5 steps (40%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-05T104138.911928.snakemake.log

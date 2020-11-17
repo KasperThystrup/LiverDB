@@ -1,0 +1,10 @@
+name: R
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - r-base = 4.0.3
+  - r-tidyverse = 1.3
+  - r-jsonlite = 1.7.1
+  - bioconductor-deseq2 = 1.30
+  - r-logger = 0.1

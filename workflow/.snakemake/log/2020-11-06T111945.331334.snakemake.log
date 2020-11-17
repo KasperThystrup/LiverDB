@@ -1,0 +1,34 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	tx_sort
+	2
+
+[Fri Nov  6 11:19:45 2020]
+rule tx_sort:
+    input: results/Metadata/SRR8094770.json, results/STAR/SRR8094770_Aligned.toTranscriptome.out.bam
+    output: results/STAR/SRR8094770_Aligned.toTranscriptome.sortedByCoord.out.bam
+    log: info/logs/SRR8094770.star_align.log
+    jobid: 2
+    benchmark: info/benchmark/SRR8094770.star_align.bench
+    wildcards: sample=SRR8094770
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Removing temporary output file results/STAR/SRR8094770_Aligned.toTranscriptome.out.bam.
+[Fri Nov  6 11:19:49 2020]
+Finished job 2.
+1 of 2 steps (50%) done
+
+[Fri Nov  6 11:19:49 2020]
+localrule all:
+    input: results/STAR/SRR12845350_Aligned.toTranscriptome.sortedByCoord.out.bam, results/STAR/SRR8094770_Aligned.toTranscriptome.sortedByCoord.out.bam
+    jobid: 0
+
+[Fri Nov  6 11:19:49 2020]
+Finished job 0.
+2 of 2 steps (100%) done
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-06T111945.331334.snakemake.log

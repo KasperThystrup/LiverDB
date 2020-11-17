@@ -1,0 +1,35 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	getmetadata
+	3
+
+[Wed Nov  4 15:41:27 2020]
+rule getmetadata:
+    output: METADATA/SRR12845350.json
+    jobid: 1
+    wildcards: sample=SRR12845350
+
+[Wed Nov  4 15:41:27 2020]
+Error in rule getmetadata:
+    jobid: 1
+    output: METADATA/SRR12845350.json
+
+RuleException:
+URLError in line 32 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile:
+<urlopen error [Errno 2] No such file or directory: '/home/kasper/Git_repositories/LiverDB/workflow/script/sradata.py ../resources/samples_sra.txt'>
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile", line 32, in __rule_getmetadata
+  File "/home/kasper/miniconda3/lib/python3.7/urllib/request.py", line 222, in urlopen
+  File "/home/kasper/miniconda3/lib/python3.7/urllib/request.py", line 525, in open
+  File "/home/kasper/miniconda3/lib/python3.7/urllib/request.py", line 543, in _open
+  File "/home/kasper/miniconda3/lib/python3.7/urllib/request.py", line 503, in _call_chain
+  File "/home/kasper/miniconda3/lib/python3.7/urllib/request.py", line 1453, in file_open
+  File "/home/kasper/miniconda3/lib/python3.7/urllib/request.py", line 1492, in open_local_file
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-04T154127.838097.snakemake.log

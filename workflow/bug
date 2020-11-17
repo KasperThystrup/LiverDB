@@ -1,0 +1,14 @@
+import time
+
+# Setup snakemake background parameters
+configfile: "config/config.yaml"
+
+me = config["me"]
+you = config["you"]
+
+rule test:
+    output:
+        "some_output.file"
+    run:
+        me + you
+        time.sleep(70)

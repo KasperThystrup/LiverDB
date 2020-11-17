@@ -1,0 +1,60 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	metadata
+	2	srafetch
+	5
+
+[Thu Nov  5 11:03:46 2020]
+rule metadata:
+    output: results/Metadata/SRR12845350.json
+    log: info/logs/SRR12845350.metadata.log
+    jobid: 3
+    benchmark: info/benchmark/SRR12845350.metadata.bench
+    wildcards: sample=SRR12845350
+    threads: 4
+
+[Thu Nov  5 11:03:46 2020]
+rule metadata:
+    output: results/Metadata/SRR8094770.json
+    log: info/logs/SRR8094770.metadata.log
+    jobid: 4
+    benchmark: info/benchmark/SRR8094770.metadata.bench
+    wildcards: sample=SRR8094770
+    threads: 4
+
+[Thu Nov  5 11:03:50 2020]
+Finished job 4.
+1 of 5 steps (20%) done
+
+[Thu Nov  5 11:03:50 2020]
+rule srafetch:
+    input: results/Metadata/SRR8094770.json
+    output: results/SRA/SRR8094770.sra
+    log: info/logs/SRR8094770.srafetch.log
+    jobid: 2
+    benchmark: info/benchmark/SRR8094770.srafetch.bench
+    wildcards: sample=SRR8094770
+    threads: 4
+
+[Thu Nov  5 11:03:50 2020]
+Error in rule srafetch:
+    jobid: 2
+    output: results/SRA/SRR8094770.sra
+    log: info/logs/SRR8094770.srafetch.log (check log file(s) for error message)
+
+RuleException:
+CalledProcessError in line 68 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmpjwydpb6d.sraprefetch.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 68, in __rule_srafetch
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+[Thu Nov  5 11:03:51 2020]
+Finished job 3.
+2 of 5 steps (40%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-05T110346.912628.snakemake.log

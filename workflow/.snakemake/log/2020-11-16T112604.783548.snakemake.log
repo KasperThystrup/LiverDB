@@ -1,0 +1,178 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	16	STAR_align
+	1	all
+	16	count_reads
+	16	fastqdump
+	16	metadata
+	16	srafetch
+	16	tx_sort
+	16	zero_intolerance
+	113
+
+[Mon Nov 16 11:26:04 2020]
+rule metadata:
+    output: results/Metadata/SRR3945166.json
+    log: info/logs/SRR3945166.metadata.log
+    jobid: 48
+    benchmark: info/benchmark/SRR3945166.metadata.bench
+    wildcards: sample=SRR3945166
+    threads: 10
+
+[Mon Nov 16 11:26:04 2020]
+rule metadata:
+    output: results/Metadata/SRR5899022.json
+    log: info/logs/SRR5899022.metadata.log
+    jobid: 72
+    benchmark: info/benchmark/SRR5899022.metadata.bench
+    wildcards: sample=SRR5899022
+    threads: 10
+
+[Mon Nov 16 11:26:04 2020]
+rule metadata:
+    output: results/Metadata/SRR3945162.json
+    log: info/logs/SRR3945162.metadata.log
+    jobid: 39
+    benchmark: info/benchmark/SRR3945162.metadata.bench
+    wildcards: sample=SRR3945162
+    threads: 10
+
+[Mon Nov 16 11:26:08 2020]
+Finished job 48.
+1 of 113 steps (0.88%) done
+
+[Mon Nov 16 11:26:08 2020]
+rule srafetch:
+    input: results/Metadata/SRR3945166.json
+    output: results/Rawdata/SRA/SRR3945166.sra
+    log: info/logs/SRR3945166.srafetch.log
+    jobid: 102
+    benchmark: info/benchmark/SRR3945166.srafetch.bench
+    wildcards: sample=SRR3945166
+    threads: 10
+
+[Mon Nov 16 11:26:10 2020]
+Finished job 72.
+2 of 113 steps (2%) done
+
+[Mon Nov 16 11:26:10 2020]
+rule srafetch:
+    input: results/Metadata/SRR5899022.json
+    output: results/Rawdata/SRA/SRR5899022.sra
+    log: info/logs/SRR5899022.srafetch.log
+    jobid: 110
+    benchmark: info/benchmark/SRR5899022.srafetch.bench
+    wildcards: sample=SRR5899022
+    threads: 10
+
+[Mon Nov 16 11:26:10 2020]
+Finished job 39.
+3 of 113 steps (3%) done
+
+[Mon Nov 16 11:26:10 2020]
+rule srafetch:
+    input: results/Metadata/SRR3945162.json
+    output: results/Rawdata/SRA/SRR3945162.sra
+    log: info/logs/SRR3945162.srafetch.log
+    jobid: 99
+    benchmark: info/benchmark/SRR3945162.srafetch.bench
+    wildcards: sample=SRR3945162
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Mon Nov 16 11:30:20 2020]
+Finished job 110.
+4 of 113 steps (4%) done
+
+[Mon Nov 16 11:30:20 2020]
+rule fastqdump:
+    input: results/Metadata/SRR5899022.json, results/Rawdata/SRA/SRR5899022.sra
+    output: results/Rawdata/Fastq/SRR5899022_1.fastq, results/Rawdata/Fastq/SRR5899022_2.fastq
+    log: info/logs/SRR5899022.fastqdump.log
+    jobid: 94
+    benchmark: info/benchmark/SRR5899022.fastqdump.bench
+    wildcards: sample=SRR5899022
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Mon Nov 16 11:31:20 2020]
+Finished job 102.
+5 of 113 steps (4%) done
+
+[Mon Nov 16 11:31:20 2020]
+rule fastqdump:
+    input: results/Metadata/SRR3945166.json, results/Rawdata/SRA/SRR3945166.sra
+    output: results/Rawdata/Fastq/SRR3945166_1.fastq, results/Rawdata/Fastq/SRR3945166_2.fastq
+    log: info/logs/SRR3945166.fastqdump.log
+    jobid: 86
+    benchmark: info/benchmark/SRR3945166.fastqdump.bench
+    wildcards: sample=SRR3945166
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Mon Nov 16 11:31:26 2020]
+Finished job 99.
+6 of 113 steps (5%) done
+
+[Mon Nov 16 11:31:27 2020]
+rule fastqdump:
+    input: results/Metadata/SRR3945162.json, results/Rawdata/SRA/SRR3945162.sra
+    output: results/Rawdata/Fastq/SRR3945162_1.fastq, results/Rawdata/Fastq/SRR3945162_2.fastq
+    log: info/logs/SRR3945162.fastqdump.log
+    jobid: 83
+    benchmark: info/benchmark/SRR3945162.fastqdump.bench
+    wildcards: sample=SRR3945162
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Mon Nov 16 11:31:40 2020]
+[Mon Nov 16 11:31:40 2020]
+Error in rule fastqdump:
+Error in rule fastqdump:
+    jobid: 94
+    jobid: 83
+    output: results/Rawdata/Fastq/SRR5899022_1.fastq, results/Rawdata/Fastq/SRR5899022_2.fastq
+[Mon Nov 16 11:31:40 2020]
+    output: results/Rawdata/Fastq/SRR3945162_1.fastq, results/Rawdata/Fastq/SRR3945162_2.fastq
+    log: info/logs/SRR5899022.fastqdump.log (check log file(s) for error message)
+Error in rule fastqdump:
+    log: info/logs/SRR3945162.fastqdump.log (check log file(s) for error message)
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+    jobid: 86
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+
+    output: results/Rawdata/Fastq/SRR3945166_1.fastq, results/Rawdata/Fastq/SRR3945166_2.fastq
+
+    log: info/logs/SRR3945166.fastqdump.log (check log file(s) for error message)
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+RuleException:
+CalledProcessError in line 145 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb'; set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmpm_thgona.fastq_dump.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 145, in __rule_fastqdump
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+
+RuleException:
+CalledProcessError in line 145 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb'; set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmpwsfwi2w1.fastq_dump.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 145, in __rule_fastqdump
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Removing output files of failed job fastqdump since they might be corrupted:
+results/Rawdata/Fastq/SRR5899022_1.fastq, results/Rawdata/Fastq/SRR5899022_2.fastq
+RuleException:
+CalledProcessError in line 145 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb'; set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp2ona6z07.fastq_dump.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 145, in __rule_fastqdump
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Removing output files of failed job fastqdump since they might be corrupted:
+results/Rawdata/Fastq/SRR3945162_1.fastq, results/Rawdata/Fastq/SRR3945162_2.fastq
+Removing output files of failed job fastqdump since they might be corrupted:
+results/Rawdata/Fastq/SRR3945166_1.fastq, results/Rawdata/Fastq/SRR3945166_2.fastq
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-16T112604.783548.snakemake.log

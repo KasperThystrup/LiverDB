@@ -1,0 +1,11 @@
+name: samtools
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - samtools = 1.11
+  - zlib
+  - htslib
+  - libgcc-ng
+  - ncurses
+  - bzip2

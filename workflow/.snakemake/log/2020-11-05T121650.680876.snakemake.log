@@ -1,0 +1,39 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	fastqdump
+	3
+
+[Thu Nov  5 12:16:50 2020]
+rule fastqdump:
+    input: results/Metadata/SRR8094770.json, results/SRA/SRR8094770.sra
+    output: results/Fastq/SRR8094770_1.fq, results/Fastq/SRR8094770_2.fq
+    jobid: 2
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 12:16:50 2020]
+rule fastqdump:
+    input: results/Metadata/SRR12845350.json, results/SRA/SRR12845350.sra
+    output: results/Fastq/SRR12845350_1.fq, results/Fastq/SRR12845350_2.fq
+    jobid: 1
+    wildcards: sample=SRR12845350
+
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 86 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Fastq/SRR12845350_1.fq
+results/Fastq/SRR12845350_2.fq
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 86 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Fastq/SRR8094770_1.fq
+results/Fastq/SRR8094770_2.fq
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-05T121650.680876.snakemake.log

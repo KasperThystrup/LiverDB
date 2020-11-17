@@ -1,0 +1,28 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	getmetadata
+	3
+
+[Wed Nov  4 15:37:28 2020]
+rule getmetadata:
+    output: METADATA/SRR8094770.json
+    jobid: 2
+    wildcards: sample=SRR8094770
+
+[Wed Nov  4 15:37:31 2020]
+Finished job 2.
+1 of 3 steps (33%) done
+
+[Wed Nov  4 15:37:31 2020]
+rule getmetadata:
+    output: METADATA/SRR12845350.json
+    jobid: 1
+    wildcards: sample=SRR12845350
+
+Terminating processes on user request, this might take some time.
+Cancelling snakemake on user request.

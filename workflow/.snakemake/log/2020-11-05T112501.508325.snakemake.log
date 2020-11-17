@@ -1,0 +1,3 @@
+NameError in line 85 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+name 'SRA_FOLDER' is not defined
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 85, in <module>

@@ -1,0 +1,113 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	2	STAR_align
+	1	all
+	2	fastqdump
+	2	metadata
+	2	srafetch
+	9
+
+[Thu Nov  5 15:32:24 2020]
+rule metadata:
+    output: results/Metadata/SRR8094770.json
+    log: info/logs/SRR8094770.metadata.log
+    jobid: 5
+    benchmark: info/benchmark/SRR8094770.metadata.bench
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 15:32:24 2020]
+rule metadata:
+    output: results/Metadata/SRR12845350.json
+    log: info/logs/SRR12845350.metadata.log
+    jobid: 3
+    benchmark: info/benchmark/SRR12845350.metadata.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:32:28 2020]
+Finished job 3.
+1 of 9 steps (11%) done
+
+[Thu Nov  5 15:32:28 2020]
+rule srafetch:
+    input: results/Metadata/SRR12845350.json
+    output: results/SRA/SRR12845350.sra
+    log: info/logs/SRR12845350.srafetch.log
+    jobid: 7
+    benchmark: info/benchmark/SRR12845350.srafetch.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:32:28 2020]
+Finished job 5.
+2 of 9 steps (22%) done
+
+[Thu Nov  5 15:32:28 2020]
+rule srafetch:
+    input: results/Metadata/SRR8094770.json
+    output: results/SRA/SRR8094770.sra
+    log: info/logs/SRR8094770.srafetch.log
+    jobid: 8
+    benchmark: info/benchmark/SRR8094770.srafetch.bench
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 15:32:43 2020]
+Finished job 7.
+3 of 9 steps (33%) done
+
+[Thu Nov  5 15:32:43 2020]
+rule fastqdump:
+    input: results/Metadata/SRR12845350.json, results/SRA/SRR12845350.sra
+    output: results/Fastq/SRR12845350_1.fastq, results/Fastq/SRR12845350_2.fastq
+    log: info/logs/SRR12845350.fastqdump.log
+    jobid: 4
+    benchmark: info/benchmark/SRR12845350.fastqdump.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:32:46 2020]
+Finished job 8.
+4 of 9 steps (44%) done
+
+[Thu Nov  5 15:32:46 2020]
+rule fastqdump:
+    input: results/Metadata/SRR8094770.json, results/SRA/SRR8094770.sra
+    output: results/Fastq/SRR8094770_1.fastq, results/Fastq/SRR8094770_2.fastq
+    log: info/logs/SRR8094770.fastqdump.log
+    jobid: 6
+    benchmark: info/benchmark/SRR8094770.fastqdump.bench
+    wildcards: sample=SRR8094770
+
+[Thu Nov  5 15:33:02 2020]
+Finished job 4.
+5 of 9 steps (56%) done
+
+[Thu Nov  5 15:33:02 2020]
+rule STAR_align:
+    input: results/Metadata/SRR12845350.json, results/Fastq/SRR12845350_1.fastq, results/Fastq/SRR12845350_2.fastq
+    output: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log
+    jobid: 1
+    benchmark: info/benchmark/SRR12845350.star_align.bench
+    wildcards: sample=SRR12845350
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599
+[Thu Nov  5 15:33:05 2020]
+Error in rule STAR_align:
+    jobid: 1
+    output: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log (check log file(s) for error message)
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599
+
+RuleException:
+CalledProcessError in line 156 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599'; set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp83uk9ax2.star_align.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 156, in __rule_STAR_align
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+[Thu Nov  5 15:33:38 2020]
+Finished job 6.
+6 of 9 steps (67%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-05T153224.442701.snakemake.log

@@ -1,0 +1,3 @@
+NameError in line 45 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+name 'log_dir' is not defined
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 45, in <module>

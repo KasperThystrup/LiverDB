@@ -1,0 +1,27 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	decrease_zero_inflation
+	2
+
+[Thu Nov 12 13:58:08 2020]
+rule decrease_zero_inflation:
+    input: results/Metadata/SRR12845350.json, results/Metadata/SRR8094770.json, results/Rawdata/HTSeq_count/SRR12845350_genes.tsv, results/Rawdata/HTSeq_count/SRR8094770_genes.tsv, results/Rawdata/HTSeq_count/SRR12845350_transcripts.tsv, results/Rawdata/HTSeq_count/SRR8094770_transcripts.tsv
+    output: results/Counts/9606_genes.tsv, results/Counts/9606_transcripts.tsv
+    jobid: 1
+    threads: 9
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/db72b297
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 231 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Counts/9606_genes.tsv
+results/Counts/9606_transcripts.tsv
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-12T135808.708803.snakemake.log

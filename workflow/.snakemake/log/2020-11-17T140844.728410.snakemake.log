@@ -1,0 +1,3 @@
+KeyError in line 6 of /home/kasper/Git_repositories/LiverDB/workflow/bug:
+'me'
+  File "/home/kasper/Git_repositories/LiverDB/workflow/bug", line 6, in <module>

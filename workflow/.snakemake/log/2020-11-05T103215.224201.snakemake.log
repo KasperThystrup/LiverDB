@@ -1,0 +1,3 @@
+TypeError in line 60 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+expected str, bytes or os.PathLike object, not builtin_function_or_method
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 60, in <module>

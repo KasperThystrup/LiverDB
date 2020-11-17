@@ -1,0 +1,53 @@
+Building DAG of jobs...
+Creating conda environment workflow/envs/environment.yaml...
+Downloading and installing remote packages.
+Environment for workflow/envs/environment.yaml created (location: .snakemake/conda/93af089c)
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	2	STAR_align
+	1	all
+	3
+
+[Fri Nov  6 09:31:36 2020]
+rule STAR_align:
+    input: results/Metadata/SRR8094770.json, results/Fastq/SRR8094770_1.fastq, results/Fastq/SRR8094770_2.fastq
+    output: results/STAR/SRR8094770_Aligned.sortedByCoord.out.bam, results/STAR/SRR8094770_Aligned.toTranscriptome.out.bam, results/STAR/SRR8094770_Chimeric.out.junction, results/STAR/SRR8094770_Log.final.out, results/STAR/SRR8094770_Log.out, results/STAR/SRR8094770_Log.progress.out, results/STAR/SRR8094770_SJ.out.tab
+    log: info/logs/SRR8094770.star_align.log
+    jobid: 2
+    benchmark: info/benchmark/SRR8094770.star_align.bench
+    wildcards: sample=SRR8094770
+    threads: 5
+
+[Fri Nov  6 09:31:36 2020]
+rule STAR_align:
+    input: results/Metadata/SRR12845350.json, results/Fastq/SRR12845350_1.fastq, results/Fastq/SRR12845350_2.fastq
+    output: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log
+    jobid: 1
+    benchmark: info/benchmark/SRR12845350.star_align.bench
+    wildcards: sample=SRR12845350
+    threads: 5
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/93af089c
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/93af089c
+[Fri Nov  6 09:34:02 2020]
+Finished job 1.
+1 of 3 steps (33%) done
+[Fri Nov  6 09:36:58 2020]
+Finished job 2.
+2 of 3 steps (67%) done
+
+[Fri Nov  6 09:36:58 2020]
+localrule all:
+    input: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR8094770_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR8094770_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR8094770_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR8094770_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR8094770_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR8094770_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab, results/STAR/SRR8094770_SJ.out.tab
+    jobid: 0
+
+Removing temporary output file results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam.
+Removing temporary output file results/STAR/SRR8094770_Aligned.toTranscriptome.out.bam.
+[Fri Nov  6 09:36:58 2020]
+Finished job 0.
+3 of 3 steps (100%) done
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-06T093049.117146.snakemake.log

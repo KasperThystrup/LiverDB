@@ -1,0 +1,33 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	1	zero_intolerance
+	2
+
+[Fri Nov 13 09:55:38 2020]
+rule zero_intolerance:
+    input: results/Rawdata/Counts/9606/genes.tsv, results/Rawdata/Counts/9606/transcripts.tsv
+    output: results/Counts/9606/genes.tsv, results/Counts/9606/transcript.tsv
+    jobid: 1
+    wildcards: species=9606
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/db72b297
+[Fri Nov 13 09:55:46 2020]
+Error in rule zero_intolerance:
+    jobid: 1
+    output: results/Counts/9606/genes.tsv, results/Counts/9606/transcript.tsv
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/db72b297
+
+RuleException:
+CalledProcessError in line 278 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/db72b297'; set -euo pipefail;  Rscript --vanilla /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp73xrmcmr.zero_intolerance.R' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 278, in __rule_zero_intolerance
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-13T095538.572930.snakemake.log

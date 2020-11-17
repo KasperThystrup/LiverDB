@@ -1,0 +1,7 @@
+name: sra_tools
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - sra-tools = 2.10.8
+  - hdf5

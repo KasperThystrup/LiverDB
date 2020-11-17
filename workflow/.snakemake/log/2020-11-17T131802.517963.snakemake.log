@@ -1,0 +1,237 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	6	STAR_align
+	1	all
+	6	tx_sort
+	13
+
+[Tue Nov 17 13:18:02 2020]
+rule STAR_align:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045527.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045527_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045527_2.fastq
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.toTranscriptome.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Chimeric.out.junction, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Log.final.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Log.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Log.progress.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_SJ.out.tab
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045527.star_align.log
+    jobid: 24
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045527.star_align.bench
+    wildcards: sample=SRR1045527
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045527_2.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045527_1.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Log.progress.out.
+[Tue Nov 17 13:22:24 2020]
+Finished job 24.
+1 of 13 steps (8%) done
+
+[Tue Nov 17 13:22:24 2020]
+rule STAR_align:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045524.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045524_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045524_2.fastq
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.toTranscriptome.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Chimeric.out.junction, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Log.final.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Log.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Log.progress.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_SJ.out.tab
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045524.star_align.log
+    jobid: 18
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045524.star_align.bench
+    wildcards: sample=SRR1045524
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045524_1.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045524_2.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Log.progress.out.
+[Tue Nov 17 13:26:26 2020]
+Finished job 18.
+2 of 13 steps (15%) done
+
+[Tue Nov 17 13:26:26 2020]
+rule STAR_align:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045523.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045523_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045523_2.fastq
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.toTranscriptome.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Chimeric.out.junction, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Log.final.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Log.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Log.progress.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_SJ.out.tab
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045523.star_align.log
+    jobid: 16
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045523.star_align.bench
+    wildcards: sample=SRR1045523
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045523_2.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045523_1.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Log.progress.out.
+[Tue Nov 17 13:30:26 2020]
+Finished job 16.
+3 of 13 steps (23%) done
+
+[Tue Nov 17 13:30:26 2020]
+rule STAR_align:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045525.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045525_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045525_2.fastq
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.toTranscriptome.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Chimeric.out.junction, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Log.final.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Log.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Log.progress.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_SJ.out.tab
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045525.star_align.log
+    jobid: 20
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045525.star_align.bench
+    wildcards: sample=SRR1045525
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045525_1.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045525_2.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Log.progress.out.
+[Tue Nov 17 13:34:34 2020]
+Finished job 20.
+4 of 13 steps (31%) done
+
+[Tue Nov 17 13:34:34 2020]
+rule STAR_align:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045526.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045526_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045526_2.fastq
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.toTranscriptome.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Chimeric.out.junction, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Log.final.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Log.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Log.progress.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_SJ.out.tab
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045526.star_align.log
+    jobid: 22
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045526.star_align.bench
+    wildcards: sample=SRR1045526
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045526_2.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045526_1.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Log.progress.out.
+[Tue Nov 17 13:37:32 2020]
+Finished job 22.
+5 of 13 steps (38%) done
+
+[Tue Nov 17 13:37:32 2020]
+rule STAR_align:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045522.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045522_1.fastq, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045522_2.fastq
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.toTranscriptome.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Chimeric.out.junction, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Log.final.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Log.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Log.progress.out, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_SJ.out.tab
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045522.star_align.log
+    jobid: 14
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045522.star_align.bench
+    wildcards: sample=SRR1045522
+    threads: 36
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045522_1.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Fastq/SRR1045522_2.fastq.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Log.progress.out.
+[Tue Nov 17 13:40:22 2020]
+Finished job 14.
+6 of 13 steps (46%) done
+
+[Tue Nov 17 13:40:22 2020]
+rule tx_sort:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045524.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.toTranscriptome.out.bam
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.toTranscriptome.sortedByCoord.out.bam
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045524.tx_sort.log
+    jobid: 5
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045524.tx_sort.bench
+    wildcards: sample=SRR1045524
+    threads: 10
+
+[Tue Nov 17 13:40:22 2020]
+rule tx_sort:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045523.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.toTranscriptome.out.bam
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.toTranscriptome.sortedByCoord.out.bam
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045523.tx_sort.log
+    jobid: 4
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045523.tx_sort.bench
+    wildcards: sample=SRR1045523
+    threads: 10
+
+
+[Tue Nov 17 13:40:22 2020]
+rule tx_sort:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045525.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.toTranscriptome.out.bam
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.toTranscriptome.sortedByCoord.out.bam
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045525.tx_sort.log
+    jobid: 6
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045525.tx_sort.bench
+    wildcards: sample=SRR1045525
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.toTranscriptome.out.bam.
+[Tue Nov 17 13:45:38 2020]
+Finished job 4.
+7 of 13 steps (54%) done
+
+[Tue Nov 17 13:45:38 2020]
+rule tx_sort:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045527.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.toTranscriptome.out.bam
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.toTranscriptome.sortedByCoord.out.bam
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045527.tx_sort.log
+    jobid: 8
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045527.tx_sort.bench
+    wildcards: sample=SRR1045527
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.toTranscriptome.out.bam.
+[Tue Nov 17 13:46:02 2020]
+Finished job 5.
+8 of 13 steps (62%) done
+
+[Tue Nov 17 13:46:02 2020]
+rule tx_sort:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045522.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.toTranscriptome.out.bam
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.toTranscriptome.sortedByCoord.out.bam
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045522.tx_sort.log
+    jobid: 3
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045522.tx_sort.bench
+    wildcards: sample=SRR1045522
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.toTranscriptome.out.bam.
+[Tue Nov 17 13:46:17 2020]
+Finished job 6.
+9 of 13 steps (69%) done
+
+[Tue Nov 17 13:46:17 2020]
+rule tx_sort:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Metadata/SRR1045526.json, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.toTranscriptome.out.bam
+    output: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.toTranscriptome.sortedByCoord.out.bam
+    log: /disk3/Data/RNAseq/dev20.004_LiverDB/info/logs/SRR1045526.tx_sort.log
+    jobid: 7
+    benchmark: /disk3/Data/RNAseq/dev20.004_LiverDB/info/benchmark/SRR1045526.tx_sort.bench
+    wildcards: sample=SRR1045526
+    threads: 10
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/4267c048
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.toTranscriptome.out.bam.
+[Tue Nov 17 13:48:45 2020]
+Finished job 7.
+10 of 13 steps (77%) done
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.toTranscriptome.out.bam.
+[Tue Nov 17 13:49:13 2020]
+Finished job 3.
+11 of 13 steps (85%) done
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.toTranscriptome.out.bam.
+[Tue Nov 17 13:49:41 2020]
+Finished job 8.
+12 of 13 steps (92%) done
+
+[Tue Nov 17 13:49:41 2020]
+localrule all:
+    input: /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR5750514_Aligned.toTranscriptome.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR5750521_Aligned.toTranscriptome.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.toTranscriptome.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.toTranscriptome.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.toTranscriptome.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.toTranscriptome.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.toTranscriptome.sortedByCoord.out.bam, /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.toTranscriptome.sortedByCoord.out.bam
+    jobid: 0
+
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR5750514_Aligned.toTranscriptome.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR5750521_Aligned.toTranscriptome.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045522_Aligned.toTranscriptome.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045523_Aligned.toTranscriptome.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045524_Aligned.toTranscriptome.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045525_Aligned.toTranscriptome.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045526_Aligned.toTranscriptome.sortedByCoord.out.bam.
+Removing temporary output file /disk3/Data/RNAseq/dev20.004_LiverDB/results/Rawdata/Aligned/SRR1045527_Aligned.toTranscriptome.sortedByCoord.out.bam.
+[Tue Nov 17 13:49:45 2020]
+Finished job 0.
+13 of 13 steps (100%) done
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-17T131802.517963.snakemake.log

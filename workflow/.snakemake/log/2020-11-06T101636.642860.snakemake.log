@@ -1,0 +1,31 @@
+Building DAG of jobs...
+Creating conda environment workflow/envs/samtools.yaml...
+Downloading and installing remote packages.
+CreateCondaEnvironmentException:
+Could not create conda environment from /home/kasper/Git_repositories/LiverDB/workflow/envs/samtools.yaml:
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... Building graph of deps:   0%|          | 0/5 [00:00<?, ?it/s]Examining zlib[version='>=1.2.11,<1.3.0a0']:   0%|          | 0/5 [00:00<?, ?it/s]Examining libgcc-ng[version='>=7.5.0']:  20%|██        | 1/5 [00:00<00:00, 425.04it/s]Examining @/linux-64::__glibc==2.23=0:  40%|████      | 2/5 [00:00<00:00, 656.85it/s] Examining ncurses[version='>=6.2,<6.3.0a0']:  60%|██████    | 3/5 [00:00<00:00, 892.98it/s]Examining htslib[version='>=1.11,<1.12.0a0']:  80%|████████  | 4/5 [00:00<00:00, 874.59it/s]                                                                                            Determining conflicts:   0%|          | 0/5 [00:00<?, ?it/s]Examining conflict for zlib htslib:   0%|          | 0/5 [00:00<?, ?it/s]Examining conflict for ncurses zlib htslib libgcc-ng:  20%|██        | 1/5 [00:00<00:00, 1019.27it/s]                                                                                                     
+Found conflicts! Looking for incompatible packages.
+This can take several minutes.  Press CTRL-C to abort.
+failed
+Solving environment: ...working... Building graph of deps:   0%|          | 0/5 [00:00<?, ?it/s]Examining zlib[version='>=1.2.11,<1.3.0a0']:   0%|          | 0/5 [00:00<?, ?it/s]Examining libgcc-ng[version='>=7.5.0']:  20%|██        | 1/5 [00:00<00:00, 522.85it/s]Examining @/linux-64::__glibc==2.23=0:  40%|████      | 2/5 [00:00<00:00, 767.48it/s] Examining ncurses[version='>=6.2,<6.3.0a0']:  60%|██████    | 3/5 [00:00<00:00, 1020.76it/s]Examining htslib[version='>=1.11,<1.12.0a0']:  80%|████████  | 4/5 [00:00<00:00, 956.95it/s]                                                                                            Determining conflicts:   0%|          | 0/5 [00:00<?, ?it/s]Examining conflict for zlib htslib:   0%|          | 0/5 [00:00<?, ?it/s]Examining conflict for ncurses zlib htslib libgcc-ng:  20%|██        | 1/5 [00:00<00:00, 1333.64it/s]                                                                                                     
+Found conflicts! Looking for incompatible packages.
+This can take several minutes.  Press CTRL-C to abort.
+failed
+
+UnsatisfiableError: The following specifications were found to be incompatible with each other:
+
+Output in format: Requested package -> Available versions
+
+Package libgcc-ng conflicts for:
+htslib[version='>=1.11,<1.12.0a0'] -> libgcc-ng[version='>=7.5.0']
+libgcc-ng[version='>=7.5.0']
+ncurses[version='>=6.2,<6.3.0a0'] -> libgcc-ng[version='>=7.3.0']
+htslib[version='>=1.11,<1.12.0a0'] -> bzip2[version='>=1.0.8,<2.0a0'] -> libgcc-ng[version='>=7.2.0|>=7.3.0']
+
+Package zlib conflicts for:
+zlib[version='>=1.2.11,<1.3.0a0']
+htslib[version='>=1.11,<1.12.0a0'] -> zlib[version='>=1.2.11,<1.3.0a0']
+
+
+  File "/home/kasper/miniconda3/lib/python3.7/site-packages/snakemake/deployment/conda.py", line 334, in create

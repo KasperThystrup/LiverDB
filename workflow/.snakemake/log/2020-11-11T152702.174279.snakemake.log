@@ -1,0 +1,121 @@
+Building DAG of jobs...
+Creating conda environment workflow/envs/R.yaml...
+Downloading and installing remote packages.
+Environment for workflow/envs/R.yaml created (location: .snakemake/conda/9e8b782a)
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	2	STAR_align
+	1	all
+	2	count_reads
+	1	decrease_zero_inflation
+	2	fastqdump
+	2	srafetch
+	2	tx_sort
+	12
+
+[Wed Nov 11 15:29:22 2020]
+rule srafetch:
+    input: results/Metadata/SRR12845350.json
+    output: results/Rawdata/SRA/SRR12845350.sra
+    log: info/logs/SRR12845350.srafetch.log
+    jobid: 12
+    benchmark: info/benchmark/SRR12845350.srafetch.bench
+    wildcards: sample=SRR12845350
+
+[Wed Nov 11 15:29:22 2020]
+rule srafetch:
+    input: results/Metadata/SRR8094770.json
+    output: results/Rawdata/SRA/SRR8094770.sra
+    log: info/logs/SRR8094770.srafetch.log
+    jobid: 13
+    benchmark: info/benchmark/SRR8094770.srafetch.bench
+    wildcards: sample=SRR8094770
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Wed Nov 11 15:29:43 2020]
+Finished job 12.
+1 of 12 steps (8%) done
+
+[Wed Nov 11 15:29:43 2020]
+rule fastqdump:
+    input: results/Metadata/SRR12845350.json, results/Rawdata/SRA/SRR12845350.sra
+    output: results/Rawdata/Fastq/SRR12845350_1.fastq, results/Rawdata/Fastq/SRR12845350_2.fastq
+    log: info/logs/SRR12845350.fastqdump.log
+    jobid: 10
+    benchmark: info/benchmark/SRR12845350.fastqdump.bench
+    wildcards: sample=SRR12845350
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+[Wed Nov 11 15:29:45 2020]
+Finished job 13.
+2 of 12 steps (17%) done
+
+[Wed Nov 11 15:29:45 2020]
+rule fastqdump:
+    input: results/Metadata/SRR8094770.json, results/Rawdata/SRA/SRR8094770.sra
+    output: results/Rawdata/Fastq/SRR8094770_1.fastq, results/Rawdata/Fastq/SRR8094770_2.fastq
+    log: info/logs/SRR8094770.fastqdump.log
+    jobid: 11
+    benchmark: info/benchmark/SRR8094770.fastqdump.bench
+    wildcards: sample=SRR8094770
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f0208fbb
+Removing temporary output file results/Rawdata/SRA/SRR12845350.sra.
+[Wed Nov 11 15:30:01 2020]
+Finished job 10.
+3 of 12 steps (25%) done
+
+[Wed Nov 11 15:30:01 2020]
+rule STAR_align:
+    input: results/Metadata/SRR12845350.json, results/Rawdata/Fastq/SRR12845350_1.fastq, results/Rawdata/Fastq/SRR12845350_2.fastq
+    output: results/Rawdata/Aligned/SRR12845350_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR12845350_Aligned.toTranscriptome.out.bam, results/Rawdata/Aligned/SRR12845350_Chimeric.out.junction, results/Rawdata/Aligned/SRR12845350_STAR.Log.final.out, results/Rawdata/Aligned/SRR12845350_STAR.Log.out, results/Rawdata/Aligned/SRR12845350_STAR.Log.progress.out, results/Rawdata/Aligned/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log
+    jobid: 6
+    benchmark: info/benchmark/SRR12845350.star_align.bench
+    wildcards: sample=SRR12845350
+    threads: 4
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Removing temporary output file results/Rawdata/SRA/SRR8094770.sra.
+[Wed Nov 11 15:30:36 2020]
+Finished job 11.
+4 of 12 steps (33%) done
+
+[Wed Nov 11 15:30:36 2020]
+rule STAR_align:
+    input: results/Metadata/SRR8094770.json, results/Rawdata/Fastq/SRR8094770_1.fastq, results/Rawdata/Fastq/SRR8094770_2.fastq
+    output: results/Rawdata/Aligned/SRR8094770_Aligned.sortedByCoord.out.bam, results/Rawdata/Aligned/SRR8094770_Aligned.toTranscriptome.out.bam, results/Rawdata/Aligned/SRR8094770_Chimeric.out.junction, results/Rawdata/Aligned/SRR8094770_STAR.Log.final.out, results/Rawdata/Aligned/SRR8094770_STAR.Log.out, results/Rawdata/Aligned/SRR8094770_STAR.Log.progress.out, results/Rawdata/Aligned/SRR8094770_SJ.out.tab
+    log: info/logs/SRR8094770.star_align.log
+    jobid: 8
+    benchmark: info/benchmark/SRR8094770.star_align.bench
+    wildcards: sample=SRR8094770
+    threads: 4
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/fd596e9f
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 148 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Rawdata/Aligned/SRR12845350_Aligned.sortedByCoord.out.bam
+results/Rawdata/Aligned/SRR12845350_Aligned.toTranscriptome.out.bam
+results/Rawdata/Aligned/SRR12845350_Chimeric.out.junction
+results/Rawdata/Aligned/SRR12845350_SJ.out.tab
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Removing output files of failed job STAR_align since they might be corrupted:
+results/Rawdata/Aligned/SRR12845350_STAR.Log.final.out, results/Rawdata/Aligned/SRR12845350_STAR.Log.out, results/Rawdata/Aligned/SRR12845350_STAR.Log.progress.out
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 148 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Rawdata/Aligned/SRR8094770_Aligned.sortedByCoord.out.bam
+results/Rawdata/Aligned/SRR8094770_Aligned.toTranscriptome.out.bam
+results/Rawdata/Aligned/SRR8094770_Chimeric.out.junction
+results/Rawdata/Aligned/SRR8094770_SJ.out.tab
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Removing output files of failed job STAR_align since they might be corrupted:
+results/Rawdata/Aligned/SRR8094770_STAR.Log.final.out, results/Rawdata/Aligned/SRR8094770_STAR.Log.out, results/Rawdata/Aligned/SRR8094770_STAR.Log.progress.out
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-11T152702.174279.snakemake.log

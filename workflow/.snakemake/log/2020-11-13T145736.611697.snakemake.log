@@ -1,0 +1,43 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 36
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	all
+	2	zero_intolerance
+	3
+
+[Fri Nov 13 14:57:36 2020]
+rule zero_intolerance:
+    input: results/Rawdata/Counts/9606/genes.tsv, results/Rawdata/Counts/9606/transcripts.tsv
+    output: results/Counts/9606/Samples/SRR8094770_gene_count.tsv, results/Counts/9606/Samples/SRR8094770_transcript_count.tsv
+    jobid: 2
+    wildcards: species=9606, sample=SRR8094770
+    threads: 4
+
+[Fri Nov 13 14:57:36 2020]
+rule zero_intolerance:
+    input: results/Rawdata/Counts/9606/genes.tsv, results/Rawdata/Counts/9606/transcripts.tsv
+    output: results/Counts/9606/Samples/SRR12845350_gene_count.tsv, results/Counts/9606/Samples/SRR12845350_transcript_count.tsv
+    jobid: 1
+    wildcards: species=9606, sample=SRR12845350
+    threads: 4
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/db72b297
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/db72b297
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 263 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Counts/9606/Samples/SRR12845350_gene_count.tsv
+results/Counts/9606/Samples/SRR12845350_transcript_count.tsv
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Waiting at most 5 seconds for missing files.
+MissingOutputException in line 263 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Job completed successfully, but some output files are missing. Missing files after 5 seconds:
+results/Counts/9606/Samples/SRR8094770_gene_count.tsv
+results/Counts/9606/Samples/SRR8094770_transcript_count.tsv
+This might be due to filesystem latency. If that is the case, consider to increase the wait time with --latency-wait.
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-13T145736.611697.snakemake.log

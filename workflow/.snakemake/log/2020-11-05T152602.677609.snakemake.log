@@ -1,0 +1,57 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 10
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	2	STAR_align
+	1	all
+	3
+
+[Thu Nov  5 15:26:02 2020]
+rule STAR_align:
+    input: results/Metadata/SRR12845350.json, results/Fastq/SRR12845350_1.fastq, results/Fastq/SRR12845350_2.fastq
+    output: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log
+    jobid: 1
+    benchmark: info/benchmark/SRR12845350.star_align.bench
+    wildcards: sample=SRR12845350
+
+[Thu Nov  5 15:26:02 2020]
+rule STAR_align:
+    input: results/Metadata/SRR8094770.json, results/Fastq/SRR8094770_1.fastq, results/Fastq/SRR8094770_2.fastq
+    output: results/STAR/SRR8094770_Aligned.sortedByCoord.out.bam, results/STAR/SRR8094770_Aligned.toTranscriptome.out.bam, results/STAR/SRR8094770_Chimeric.out.junction, results/STAR/SRR8094770_Log.final.out, results/STAR/SRR8094770_Log.out, results/STAR/SRR8094770_Log.progress.out, results/STAR/SRR8094770_SJ.out.tab
+    log: info/logs/SRR8094770.star_align.log
+    jobid: 2
+    benchmark: info/benchmark/SRR8094770.star_align.bench
+    wildcards: sample=SRR8094770
+
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599
+Activating conda environment: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599
+[Thu Nov  5 15:26:05 2020]
+Error in rule STAR_align:
+    jobid: 2
+    output: results/STAR/SRR8094770_Aligned.sortedByCoord.out.bam, results/STAR/SRR8094770_Aligned.toTranscriptome.out.bam, results/STAR/SRR8094770_Chimeric.out.junction, results/STAR/SRR8094770_Log.final.out, results/STAR/SRR8094770_Log.out, results/STAR/SRR8094770_Log.progress.out, results/STAR/SRR8094770_SJ.out.tab
+    log: info/logs/SRR8094770.star_align.log (check log file(s) for error message)
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599
+
+RuleException:
+CalledProcessError in line 154 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599'; set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp939yl7mh.star_align.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 154, in __rule_STAR_align
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+[Thu Nov  5 15:26:05 2020]
+Error in rule STAR_align:
+    jobid: 1
+    output: results/STAR/SRR12845350_Aligned.sortedByCoord.out.bam, results/STAR/SRR12845350_Aligned.toTranscriptome.out.bam, results/STAR/SRR12845350_Chimeric.out.junction, results/STAR/SRR12845350_Log.final.out, results/STAR/SRR12845350_Log.out, results/STAR/SRR12845350_Log.progress.out, results/STAR/SRR12845350_SJ.out.tab
+    log: info/logs/SRR12845350.star_align.log (check log file(s) for error message)
+    conda-env: /home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599
+
+RuleException:
+CalledProcessError in line 154 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
+Command 'source /home/kasper/miniconda3/bin/activate '/home/kasper/Git_repositories/LiverDB/.snakemake/conda/f2c6a599'; set -euo pipefail;  /home/kasper/miniconda3/bin/python3.7 /home/kasper/Git_repositories/LiverDB/.snakemake/scripts/tmp_txbpw0j.star_align.py' returned non-zero exit status 1.
+  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 154, in __rule_STAR_align
+  File "/home/kasper/miniconda3/lib/python3.7/concurrent/futures/thread.py", line 57, in run
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: /home/kasper/Git_repositories/LiverDB/workflow/.snakemake/log/2020-11-05T152602.677609.snakemake.log

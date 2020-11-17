@@ -1,21 +1,10 @@
 from scripts import sradata
 # from srahelp import getftpfilesize
 import json
-import time
 
 # Setup snakemake background parameters
 configfile: "config/config.yaml"
 workdir: config["workdir"]
-
-me = config["me"]
-you = config["you"]
-
-rule test:
-    output:
-        "some_output.file"
-    run:
-        me + you
-        time.sleep(70)
 
 # Defining software
 prefetch                    = config["prefetch"]
@@ -29,15 +18,15 @@ htseq_count                 = config["htseq_count"]
 ref_dir                     = config["ref_dir"]
 max_threads                 = config["max_threads"]
 sub_threads                 = config["sub_threads"]
-threshold                   = config["zero_tolerance"]
+threshold                   = config["threshold"]
 strandedness                     = config["strandedness"]
 species                     = config["species"]
 samples                     = config["samples"]
 
-output_dir                  = config["out_dir"] + "results/"
+output_dir                  = config["output_dir"] + "results/"
 
-log_dir                    = config["out_dir"] + "info/logs/"
-benchmark_dir              = config["out_dir"] + "info/benchmark/"
+log_dir                    = config["output_dir"] + "info/logs/"
+benchmark_dir              = config["output_dir"] + "info/benchmark/"
 
 metadata_files              = output_dir + "Metadata/{sample}.json"
 sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"

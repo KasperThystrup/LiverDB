@@ -1,1 +1,2 @@
-^.snakemake/*
+.snakemake*
+workflow/config/backup.yaml

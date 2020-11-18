@@ -11,7 +11,9 @@ fastq_2 	= snakemake.output[1]
 json 	= load(open(json_file))
 layout	= json["LAYOUT"]
 
-fastq_dump = cmd %(fastq_dir, sra_file)
+fastq_dump_str = " --split-e --outdir %s %s "
+
+fastq_dump = cmd + fastq_dump_str %(fastq_dir, sra_file)
 if layout == "SINGLE":
 	dummy_com = " ; touch %s" %fastq_2
 	fastq_dump += dummy_com

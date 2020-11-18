@@ -1,5 +1,5 @@
 prefetch: prefetch
-fastq_dump: fastq_dump
+fastq_dump: fastq-dump
 star: STAR
 samtools_sort: samtools sort
 htseq_count: htseq count

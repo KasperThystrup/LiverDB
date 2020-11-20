@@ -6,12 +6,13 @@ json_file 		= snakemake.input[0]
 tx_bam			= snakemake.input[1]
 cmd				= snakemake.params[0]
 tx_sorted		= snakemake.output[0]
+threads 		= snakemake.threads
 
 json 			= load(open(json_file))
 layout			= json["LAYOUT"]
 
-sort_str = " -n -o %s -O bam %s"
-sort = cmd + sort_str %(tx_sorted, tx_bam)
+sort_str = " -n -@ %s -o %s -O bam %s"
+sort = cmd + sort_str %(threads, tx_sorted, tx_bam)
 
 if layout == "SINGLE":
 	sort = "touch %s" %tx_sorted

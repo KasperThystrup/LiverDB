@@ -169,12 +169,12 @@ rule STAR_align:
     params:
         cmd         = star,
         ref_dir     = ref_dir,
-        threads     = sub_threads,
+        threads     = max_threads,  # Parallel samples not adivsed
         star_prefix = align_dir
     conda:
       "envs/star.yaml"
     threads:
-        max_threads
+        max_threads  # If set lower, multiple instances of Ref will clogg memory
     log:
         log_dir + "{sample}.star_align.log"
     benchmark:
@@ -208,7 +208,7 @@ rule tx_sort:
 
 
 """
-makeHTSeqTables extracts counts from the STAR alignment for genes if a sigle end SRA is used, 
+makeHTSeqTables extracts counts from the STAR alignment for genes if a single end SRA is used, 
 or genes and transcripts if a paired end SRA is used. 
 """
 rule count_reads:

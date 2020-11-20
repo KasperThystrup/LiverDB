@@ -2,7 +2,7 @@ prefetch: prefetch
 fastq_dump: fastq-dump
 star: STAR
 samtools_sort: samtools sort
-htseq_count: htseq count
+htseq_count: htseq-count
 ref_dir: /disk2/Resources/seqDB/ensembl/release-100/
 max_threads: 36
 sub_threads: 8

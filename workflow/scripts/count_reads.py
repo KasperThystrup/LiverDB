@@ -11,6 +11,13 @@ strandedness		= snakemake.params[2]
 gene_counts			= snakemake.output[0]
 transcript_counts	= snakemake.output[1]
 
+if strandedness:
+	strandedness = "yes"
+elif not strandedness:
+	strandedness = "no"
+else:
+	strandedness = "reverse"
+
 json 	= load(open(json_file))
 tax_id	= json["TAXON_ID"]
 layout	= json["LAYOUT"]

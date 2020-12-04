@@ -42,8 +42,7 @@ transcript_filtered_files <- snakemake@output[["transcript_filtered_files"]]
 
 files <- c(gene_counts_files, transcript_counts_files)
 files_filt <- c(gene_filtered_files, transcript_filtered_files)
-# files <- c("results/Rawdata/Counts/9606/SRR8094770_genes.tsv", "results/Rawdata/Counts/9606/SRR8094770_transcripts.tsv")
-# files_filt <- c("results/Filetered_counts/9606/Samples/SRR8094770_gene_count.tsv", "results/Filetered_counts/9606/Samples/SRR8094770_transcript_count.tsv")
+
 invisible({
   # parallel::mclapply(X = seq_along(files), mc.cores = threads, FUN = function(i, threshold = threshold) {
   lapply(X = seq_along(files), FUN = function(i) {

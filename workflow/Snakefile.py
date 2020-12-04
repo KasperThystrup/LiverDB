@@ -46,10 +46,10 @@ tx_bam_sorted               = align_dir  + "Aligned.toTranscriptome.sortedByCoor
 # transcript_files            = output_dir + "Rawdata/HTSeq_count/{sample}_transcripts.tsv"
 gene_counts_files           = output_dir + "Rawdata/Counts/{species}/{sample}_genes.tsv"
 transcript_counts_files     = output_dir + "Rawdata/Counts/{species}/{sample}_transcripts.tsv"
-gene_filtered_files         = output_dir + "Filetered_counts/{species}/Samples/{sample}_gene_count.tsv"
-transcript_filtered_files   = output_dir + "Filetered_counts/{species}/Samples/{sample}_transcript_count.tsv"
+gene_filtered_files         = output_dir + "Filetered_counts/{species}/{sample}_gene_count.tsv"
+transcript_filtered_files   = output_dir + "Filetered_counts/{species}/{sample}_transcript_count.tsv"
 gene_normalized_files       = output_dir + "Counts/{species}/gene_normalized.tsv"
-transcript__normalized_files   = output_dir + "Counts/{species}/transcript_normalized.tsv"
+transcript_normalized_files   = output_dir + "Counts/{species}/transcript_normalized.tsv"
 
 # Start rules ----------------------------------------------------------------
 # All file rules are included here for trouble shooting purposes. 
@@ -58,8 +58,8 @@ rule all:
     input:
         # expand(gene_files, sample = samples),
         # expand(transcript_files, sample = samples),
-        expand(gene_filtered_files, sample = samples, species = species),
-        expand(transcript_filtered_files, sample = samples, species = species),
+        expand(gene_normalized_files, sample = samples, species = species),
+        expand(transcript_normalized_files, sample = samples, species = species),
         # expand(fastq_1, sample=samples),
         # expand(fastq_2, sample=samples),
         expand(gene_bam, sample=samples),
@@ -257,21 +257,21 @@ rule zero_intolerance:
     script:
         "scripts/zero_intolerance.R"
 
-# """
-# Normalize samples counts
-# """
-# rule normalize_counts:
-#     input:
-#         gene_filtered_files         = gene_filtered_files,
-#         transcript_filtered_files   = transcript_filtered_files
-#     output:
-#         gene_normalized_counts      = gene_normalized_counts,
-#         transcript_normalized_files = transcript_normalized_files
-#     params:
-#         threads                     = sub_threads
-#     conda:
-#         "envs/R.yaml"
-#     threads:
-#         round(max_threads / sub_threads) ## Allows simultanous sample processing
-#     script:
-#         "scripts/normalize_counts.R"
+"""
+Normalize samples counts
+"""
+rule normalize_counts:
+    input:
+        gene_filtered_files         = expand(gene_filtered_files, sample = samples, species = species),
+        transcript_filtered_files   = expand(transcript_filtered_files, sample = samples, species = species)
+    output:
+        gene_normalized_files       = gene_normalized_files,
+        transcript_normalized_files = transcript_normalized_files
+    params:
+        threads                     = sub_threads
+    conda:
+        "envs/R.yaml"
+    threads:
+        round(max_threads / sub_threads) ## Allows simultanous sample processing
+    script:
+        "scripts/normalize_counts.R"

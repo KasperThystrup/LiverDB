@@ -1,3 +1,5 @@
+samples: samples.txt
+email: xxx@gmail.com # For Eutils -> if they ban your IP, they will warn yoou by email
 prefetch: prefetch
 fastq_dump: fastq-dump
 star: STAR
@@ -9,15 +11,4 @@ sub_threads: 8
 threshold: 0.75
 strandedness: no
 workdir: ../
-output_dir: /disk3/Data/RNAseq/dev20.004_LiverDB/
-species:
-  - 9606
-samples:
-  - SRR1045522
-  - SRR1045523
-  - SRR1045524
-  - SRR1045525
-  - SRR1045526
-  - SRR1045527
-  - SRR5750514
-  - SRR5750521
+output_dir: /disk3/Data/RNAseq/dev20.004_LiverDB/Results/

@@ -5,8 +5,11 @@ json_file = snakemake.input[0]
 cmd  = snakemake.params[0]
 sra_file  = snakemake.output[0]
 
-json 	= load(open(json_file))
-sra_run = json["RUN_accession"]
+print("DEBUG:", json_file, cmd, sra_file, sep = "\n")
+
+meta 	= load(open(json_file))
+print("DEBUG:", type(meta[0]).__name__, meta[[0]], sep = "\n")
+sra_run = meta[0]["RUN_accession"]
 
 prefetch_str = " %s -o %s"
 

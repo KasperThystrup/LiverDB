@@ -1,10 +1,21 @@
+# Setup run environment
+from math import ceil
 from scripts import sradata
-# from srahelp import getftpfilesize
 import json
 
 # Setup snakemake background parameters
 configfile: "config/config.yaml"
 workdir: config["workdir"]
+
+# Rule paths and file names --------------------------------------------------
+samples_files                     = config["samples"]
+email = config["email"]
+ref_dir                     = config["ref_dir"]
+max_threads                 = config["max_threads"]
+sub_threads                 = config["sub_threads"]
+threshold                   = config["threshold"]
+strandedness                     = config["strandedness"]
+output_dir                  = config["output_dir"]
 
 # Defining software
 prefetch                    = config["prefetch"]
@@ -13,21 +24,13 @@ star                        = config["star"]
 samtools_sort               = config["samtools_sort"]
 htseq_count                 = config["htseq_count"]
 
+# Defining Input|Output filepaths
+log_dir                    = "info/"
+benchmark_dir              = "info/"
 
-# Rule paths and file names --------------------------------------------------
-ref_dir                     = config["ref_dir"]
-max_threads                 = config["max_threads"]
-sub_threads                 = config["sub_threads"]
-threshold                   = config["threshold"]
-strandedness                     = config["strandedness"]
-species                     = config["species"]
-samples                     = config["samples"]
-
-output_dir                  = config["output_dir"] + "results/"
-
-log_dir                    = config["output_dir"] + "info/logs/"
-benchmark_dir              = config["output_dir"] + "info/benchmark/"
-
+runinfo_files = output_dir + "Metadata/{sample}_runinfo.csv"
+metadata_files = output_dir + "Metadata/{sample}.json"
+species_file = output_dir + "Species.txt"
 metadata_files              = output_dir + "Metadata/{sample}.json"
 sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"
 fastq_dir                   = output_dir + "Rawdata/Fastq/"
@@ -51,6 +54,11 @@ transcript_filtered_files   = output_dir + "Filetered_counts/{species}/{sample}_
 gene_normalized_files       = output_dir + "Counts/{species}/gene_normalized.tsv"
 transcript_normalized_files   = output_dir + "Counts/{species}/transcript_normalized.tsv"
 
+# Defining input parameters
+with open(samples_files, "r") as samples_read:
+    samples = samples_read.read().splitlines()
+
+
 # Start rules ----------------------------------------------------------------
 # All file rules are included here for trouble shooting purposes. 
 #In the cases of single end make blank transcripts file.
@@ -58,9 +66,9 @@ rule all:
     input:
         # expand(gene_files, sample = samples),
         # expand(transcript_files, sample = samples),
-        expand(gene_normalized_files, sample = samples, species = species),
-        expand(transcript_normalized_files, sample = samples, species = species),
-        # expand(fastq_1, sample=samples),
+        # expand(gene_normalized_files, sample = samples, species = species),
+        # expand(transcript_normalized_files, sample = samples, species = species),
+        # # expand(fastq_1, sample=samples),
         # expand(fastq_2, sample=samples),
         expand(gene_bam, sample=samples),
         expand(tx_bam_sorted, sample=samples)
@@ -70,26 +78,52 @@ rule all:
         # expand(log_out, sample=samples),
         # expand(log_progress, sample=samples),
         # expand(out_tab, sample=samples)
-        
 
-"""
-The getmetadata rule downloads various metadata from NCBI regarding the SRA in question. 
-This is used for determining various future steps in analysis such as to align the sample 
-as a paired end of single end, etc. 
-"""
-rule metadata:
-    output:
-        metadata_files
+
+rule runinfo:
     params:
-        "{sample}"
+        email = email,
+        gsm_id = "{sample}"
+    output:
+        runinfo_files = runinfo_files
+    conda:
+        "envs/entrez_direct.yaml"
     threads:
-        1  ## No multi-threading support, however simultanous samples may lead to timeout errors.
-    log:
-        log_dir + "{sample}.metadata.log"
-    benchmark:
-        benchmark_dir + "{sample}.metadata.bench"
+        max(ceil(workflow.cores / 3), 3)  ## At most 3 request pr second, due to Entrez-Eutils restrictions
+    shell:
+        "echo {params.gsm_id}; esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.runinfo_files} -email {params.email}"
+
+rule metadata:
+    input:
+        runinfo_files = expand(runinfo_files, sample = samples)
+    output:
+        metadata_files = expand(metadata_files, sample = samples),
+        species_file = species_file
+    conda:
+        "envs/metadata.yaml"
+    threads:
+        1
     script:
-        "scripts/sradata.py"
+        "scripts/metadata.R"
+
+# """
+# The getmetadata rule downloads various metadata from NCBI regarding the SRA in question. 
+# This is used for determining various future steps in analysis such as to align the sample 
+# as a paired end of single end, etc. 
+# """
+# rule metadata:
+#     output:
+#         metadata_files
+#     params:
+#         "{sample}"
+#     threads:
+#         1  ## No multi-threading support, however simultanous samples may lead to timeout errors.
+#     log:
+#         log_dir + "{sample}.metadata.log"
+#     benchmark:
+#         benchmark_dir + "{sample}.metadata.bench"
+#     script:
+#         "scripts/sradata.py"
         
 """
 The download sequence data rule downloads the SRA using the link stored in the METADATA. 
@@ -257,21 +291,21 @@ rule zero_intolerance:
     script:
         "scripts/zero_intolerance.R"
 
-"""
-Normalize samples counts
-"""
-rule normalize_counts:
-    input:
-        gene_filtered_files         = expand(gene_filtered_files, sample = samples, species = species),
-        transcript_filtered_files   = expand(transcript_filtered_files, sample = samples, species = species)
-    output:
-        gene_normalized_files       = gene_normalized_files,
-        transcript_normalized_files = transcript_normalized_files
-    params:
-        threads                     = sub_threads
-    conda:
-        "envs/R.yaml"
-    threads:
-        round(max_threads / sub_threads) ## Allows simultanous sample processing
-    script:
-        "scripts/normalize_counts.R"
+# """
+# Normalize samples counts
+# """
+# rule normalize_counts:
+#     input:
+#         gene_filtered_files         = expand(gene_filtered_files, sample = samples, species = species),
+#         transcript_filtered_files   = expand(transcript_filtered_files, sample = samples, species = species)
+#     output:
+#         gene_normalized_files       = gene_normalized_files,
+#         transcript_normalized_files = transcript_normalized_files
+#     params:
+#         threads                     = sub_threads
+#     conda:
+#         "envs/R.yaml"
+#     threads:
+#         round(max_threads / sub_threads) ## Allows simultanous sample processing
+#     script:
+#         "scripts/normalize_counts.R"

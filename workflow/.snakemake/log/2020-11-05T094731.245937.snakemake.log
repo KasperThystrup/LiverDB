@@ -1,3 +1,0 @@
-NameError in line 34 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-name 'math' is not defined
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 34, in <module>

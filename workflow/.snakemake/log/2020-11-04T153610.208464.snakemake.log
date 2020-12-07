@@ -1,3 +1,0 @@
-WorkflowError in line 6 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile:
-Config file config/config.yaml not found.
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile", line 6, in <module>

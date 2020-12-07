@@ -1,3 +1,0 @@
-WildcardError in line 60 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-No values given for wildcard 'sample'.
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 60, in <module>

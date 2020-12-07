@@ -4,7 +4,8 @@ from scripts import sradata
 import json
 
 # Setup snakemake background parameters
-configfile: "workflow/config/config.yaml"
+configfile: "config/config.yaml"
+workdir: config["workdir"]
 
 # Rule paths and file names --------------------------------------------------
 samples_files                     = config["samples"]
@@ -27,8 +28,10 @@ htseq_count                 = config["htseq_count"]
 log_dir                    = "info/"
 benchmark_dir              = "info/"
 
+# runinfo_files = output_dir + "Metadata/{<sample}_runinfo.csv"
 metadata_files = output_dir + "Metadata/{sample}.csv"
 species_file = output_dir + "Species.txt"
+# metadata_files              = output_dir + "Metadata/{sample}.json"
 sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"
 fastq_dir                   = output_dir + "Rawdata/Fastq/"
 fastq_1                     = fastq_dir  + "{sample}_1.fastq"
@@ -77,7 +80,7 @@ rule all:
         # expand(out_tab, sample=samples)
 
 
-rule metadata:
+rule runinfo:
     params:
         email = email,
         gsm_id = "{sample}"
@@ -90,17 +93,18 @@ rule metadata:
     shell:
         "echo {params.gsm_id}; esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.metadata_files} -email {params.email}"
 
-rule species:
+rule metadata:
     input:
         metadata_files = expand(metadata_files, sample = samples)
     output:
+        metadata_files = expand(metadata_files, sample = samples),
         species_file = species_file
     conda:
         "envs/metadata.yaml"
     threads:
         1
     script:
-        "scripts/species.R"
+        "scripts/metadata.R"
 
 # """
 # The getmetadata rule downloads various metadata from NCBI regarding the SRA in question. 

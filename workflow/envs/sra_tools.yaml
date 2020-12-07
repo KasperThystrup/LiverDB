@@ -1,7 +1,8 @@
 name: sra_tools
 channels:
-  - bioconda
-  - conda-forge
+ - bioconda
+ - conda-forge
 dependencies:
-  - sra-tools = 2.10.8
-  - hdf5
+ - pandas = 1.1.4
+ - sra-tools = 2.10.8
+ - hdf5

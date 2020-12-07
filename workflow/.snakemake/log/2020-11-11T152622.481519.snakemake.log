@@ -1,4 +1,0 @@
-Building DAG of jobs...
-WildcardError in line 230 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-Wildcards in input files cannot be determined from output files:
-'sample'

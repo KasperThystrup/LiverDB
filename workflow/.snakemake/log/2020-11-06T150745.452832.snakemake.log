@@ -1,3 +1,0 @@
-NameError in line 151 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-name 'temo' is not defined
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 151, in <module>

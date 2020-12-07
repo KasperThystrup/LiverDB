@@ -10,5 +10,4 @@ max_threads: 36
 sub_threads: 8
 threshold: 0.75
 strandedness: no
-workdir: ../
 output_dir: /disk3/Data/RNAseq/dev20.004_LiverDB/Results/

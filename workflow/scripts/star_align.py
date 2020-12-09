@@ -1,3 +1,4 @@
+from pandas import read_csv
 from json import load
 from snakemake import shell
 from sys import exit
@@ -17,9 +18,11 @@ log_out			= snakemake.output[4]
 log_progress	= snakemake.output[5]
 out_tab			= snakemake.output[6]
 
-json 	= load(open(json_file))
-tax_id	= json["TAXON_ID"]
-layout	= json["LAYOUT"]
+
+meta = read_csv(csv_file)
+
+tax_id = meta["TaxID"][0]
+layout = meta["LibraryLayout"][0]
 
 star_idx = "%s/%s/STAR" %(ref_dir, tax_id)
 

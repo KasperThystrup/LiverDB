@@ -1,5 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 31 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-Missing input files for rule all:
-results/Fastq/SRR8094770_2.fastq2.fq
-results/Fastq/SRR12845350_2.fastq2.fq

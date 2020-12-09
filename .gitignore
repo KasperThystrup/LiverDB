@@ -1,2 +1,5 @@
 .snakemake*
 workflow/config/backup.yaml
+info
+Results
+*deprecated

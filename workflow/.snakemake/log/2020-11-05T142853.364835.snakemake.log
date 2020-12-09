@@ -1,3 +1,0 @@
-NameError in line 140 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-name 'out_dir' is not defined
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 140, in <module>

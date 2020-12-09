@@ -1,3 +1,0 @@
-NameError in line 208 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-name 'HTSeq_count' is not defined
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 208, in <module>

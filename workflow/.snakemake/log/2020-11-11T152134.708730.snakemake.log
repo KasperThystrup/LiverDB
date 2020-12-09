@@ -1,3 +1,0 @@
-TypeError in line 247 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-benchmark() takes 2 positional arguments but 3 were given
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 247, in <module>

@@ -1,2 +1,0 @@
-SyntaxError in line 65 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-Multiple run or shell keywords in rule srafetch. (Snakefile.py, line 65)

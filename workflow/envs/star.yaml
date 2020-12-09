@@ -1,5 +1,7 @@
 name: star
 channels:
-  - bioconda
+ - bioconda
+ - conda-forge
 dependencies:
-  - star = 2.7.6a
+ - pandas = 1.1.4
+ - star = 2.7.6a

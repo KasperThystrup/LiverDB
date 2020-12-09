@@ -1,8 +1,9 @@
+from pandas import read_csv
 from json import load
 from snakemake import shell
 from sys import exit
 
-json_file 			= snakemake.input[0]
+csv_file 			= snakemake.input[0]
 gene_bam			= snakemake.input[1]
 tx_bam				= snakemake.input[2]
 cmd					= snakemake.params[0]
@@ -11,16 +12,17 @@ strandedness		= snakemake.params[2]
 gene_counts			= snakemake.output[0]
 transcript_counts	= snakemake.output[1]
 
+meta = read_csv(csv_file)
+
+# tax_id = meta["TaxID"][0]
+layout = meta["LibraryLayout"][0]
+
 if strandedness:
 	strandedness = "yes"
 elif not strandedness:
 	strandedness = "no"
 else:
 	strandedness = "reverse"
-
-json 	= load(open(json_file))
-tax_id	= json["TAXON_ID"]
-layout	= json["LAYOUT"]
 
 HTSeq_idx = "%s/%s/gtf/%s.gtf" %(ref_dir, tax_id, tax_id)
 

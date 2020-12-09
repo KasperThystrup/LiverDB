@@ -1,5 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 21 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-Missing input files for rule all:
-METADATA/SRR8094770.json
-METADATA/SRR12845350.json

@@ -1,17 +1,18 @@
 # Setup run environment
 from math import ceil
-from scripts import sradata
+# from scripts import sradata
 import json
 
 # Setup snakemake background parameters
-configfile: "config/config.yaml"
-workdir: config["workdir"]
+configfile: "workflow/config/config.yaml"
 
 # Rule paths and file names --------------------------------------------------
 samples_files                     = config["samples"]
 email = config["email"]
+release = config["ensembl_release"]
 ref_dir                     = config["ref_dir"]
-max_threads                 = config["max_threads"]
+parallel = config["parallel"]
+# max_threads                 = config["max_threads"]
 sub_threads                 = config["sub_threads"]
 threshold                   = config["threshold"]
 strandedness                     = config["strandedness"]
@@ -28,10 +29,10 @@ htseq_count                 = config["htseq_count"]
 log_dir                    = "info/"
 benchmark_dir              = "info/"
 
-# runinfo_files = output_dir + "Metadata/{<sample}_runinfo.csv"
 metadata_files = output_dir + "Metadata/{sample}.csv"
 species_file = output_dir + "Species.txt"
-# metadata_files              = output_dir + "Metadata/{sample}.json"
+gtf_files = output_dir + "References/gtf_files.txt"
+fa_files = output_dir + "References/fa_files.txt"
 sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"
 fastq_dir                   = output_dir + "Rawdata/Fastq/"
 fastq_1                     = fastq_dir  + "{sample}_1.fastq"
@@ -64,23 +65,10 @@ with open(samples_files, "r") as samples_read:
 #In the cases of single end make blank transcripts file.
 rule all:
     input:
-        # expand(gene_files, sample = samples),
-        # expand(transcript_files, sample = samples),
-        # expand(gene_normalized_files, sample = samples, species = species),
-        # expand(transcript_normalized_files, sample = samples, species = species),
-        # # expand(fastq_1, sample=samples),
-        # expand(fastq_2, sample=samples),
-        expand(gene_bam, sample=samples),
-        expand(tx_bam_sorted, sample=samples)
-        # expand(tx_bam,  sample=samples),
-        # expand(chim, sample=samples),
-        # expand(log_final, sample=samples),
-        # expand(log_out, sample=samples),
-        # expand(log_progress, sample=samples),
-        # expand(out_tab, sample=samples)
+        gtf_files
 
 
-rule runinfo:
+rule metadata:
     params:
         email = email,
         gsm_id = "{sample}"
@@ -91,39 +79,46 @@ rule runinfo:
     threads:
         max(ceil(workflow.cores / 3), 3)  ## At most 3 request pr second, due to Entrez-Eutils restrictions
     shell:
-        "echo {params.gsm_id}; esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.metadata_files} -email {params.email}"
+        "esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.metadata_files} -email {params.email}"
 
-rule metadata:
+rule species:
     input:
         metadata_files = expand(metadata_files, sample = samples)
     output:
-        metadata_files = expand(metadata_files, sample = samples),
         species_file = species_file
     conda:
-        "envs/metadata.yaml"
+        "envs/species.yaml"
     threads:
         1
     script:
-        "scripts/metadata.R"
+        "scripts/species.R"
 
-# """
-# The getmetadata rule downloads various metadata from NCBI regarding the SRA in question. 
-# This is used for determining various future steps in analysis such as to align the sample 
-# as a paired end of single end, etc. 
-# """
-# rule metadata:
-#     output:
-#         metadata_files
-#     params:
-#         "{sample}"
-#     threads:
-#         1  ## No multi-threading support, however simultanous samples may lead to timeout errors.
-#     log:
-#         log_dir + "{sample}.metadata.log"
-#     benchmark:
-#         benchmark_dir + "{sample}.metadata.bench"
-#     script:
-#         "scripts/sradata.py"
+"""
+In order to set up indices for STAR aligner and RSEM,
+Ensembl reference genomes are downloaded according to the release specified in the config file.
+!Multiple FASTA file have been observed for some species, but currently, these reference styles aren't supported!
+Locations to the downloaded files are printed to text files, and are specified as output by the rule.
+Therefore reference FASTA and GTF files are not interlinked with this pipeline.
+"""
+rule references:
+    input:
+        species_file = species_file
+    output:
+        gtf_files = gtf_files,
+        fa_files = fa_files
+    params:
+        release = release
+    conda:
+        "envs/references.yaml"
+    threads:
+        workflow.cores  ## No multi-threading support
+    log:
+        log_dir + "references.log"
+    benchmark:
+        benchmark_dir + "references.bench"
+    script:
+        "scripts/references.R"
+
         
 """
 The download sequence data rule downloads the SRA using the link stored in the METADATA. 
@@ -203,12 +198,12 @@ rule STAR_align:
     params:
         cmd         = star,
         ref_dir     = ref_dir,
-        threads     = max_threads,  # Parallel samples not adivsed
+        threads     = ceil(workflow.cores / parallel),  # Parallel samples not adivsed
         star_prefix = align_dir
     conda:
       "envs/star.yaml"
     threads:
-        max_threads  # If set lower, multiple instances of Ref will clogg memory
+        ceil(workflow.cores / parallel)  # If set lower, multiple instances of Ref will clogg memory
     log:
         log_dir + "{sample}.star_align.log"
     benchmark:
@@ -232,7 +227,7 @@ rule tx_sort:
     conda:
       "envs/samtools.yaml"
     threads:
-        sub_threads
+        ceil(workflow.cores / parallel)
     log:
         log_dir + "{sample}.tx_sort.log"
     benchmark:
@@ -260,7 +255,7 @@ rule count_reads:
     conda:
       "envs/samtools.yaml"
     threads:
-        sub_threads
+        ceil(workflow.cores / parallel)
     log:
         log_dir + "{species}.{sample}.count_reads.log"
     benchmark:
@@ -287,7 +282,7 @@ rule zero_intolerance:
     conda:
         "envs/R.yaml"
     threads:
-        max_threads
+        ceil(workflow.cores / parallel)
     script:
         "scripts/zero_intolerance.R"
 

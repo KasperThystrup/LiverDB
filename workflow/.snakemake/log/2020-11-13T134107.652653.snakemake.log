@@ -1,3 +1,0 @@
-NameError in line 288 of /home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py:
-name 'gene_normalized_counts' is not defined
-  File "/home/kasper/Git_repositories/LiverDB/workflow/Snakefile.py", line 288, in <module>

@@ -3,7 +3,7 @@ from json import load
 from snakemake import shell
 from sys import exit
 
-json_file		= snakemake.input[0]
+csv_file		= snakemake.input[0]
 fastq_1			= snakemake.input[1]
 fastq_2			= snakemake.input[2]
 cmd				= snakemake.params[0]
@@ -34,6 +34,7 @@ star_str = """ \
 --outFileNamePrefix 	%s						\
 --chimSegmentMin 		20						\
 --quantMode 			TranscriptomeSAM		\
+--quantTranscriptomeBan IndelSoftclipSingleend  \
 --readFilesIn  			%s %s """
 
 

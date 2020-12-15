@@ -3,6 +3,6 @@ channels:
  - bioconda
  - conda-forge
 dependencies:
- - pandas = 1.1.4
- - sra-tools = 2.10.8
+ - pandas = 1.1
+ - sra-tools = 2.10
  - hdf5

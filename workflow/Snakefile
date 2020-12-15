@@ -30,13 +30,12 @@ log_dir                    = "info/"
 benchmark_dir              = "info/"
 
 metadata_files = output_dir + "Metadata/{sample}.csv"
-species_file = output_dir + "Species.txt"
 gtf_files = output_dir + "References/gtf_files.txt"
 fa_files = output_dir + "References/fa_files.txt"
 sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"
 fastq_dir                   = output_dir + "Rawdata/Fastq/"
-fastq_1                     = fastq_dir  + "{sample}_1.fastq"
-fastq_2                     = fastq_dir  + "{sample}_2.fastq"
+fastq_1                     = fastq_dir  + "{sample}_1.fastqx   .gz"
+fastq_2                     = fastq_dir  + "{sample}_2.fastq.gz"
 align_dir                   = output_dir + "Rawdata/Aligned/{sample}_"
 gene_bam                    = align_dir  + "Aligned.sortedByCoord.out.bam"
 tx_bam                      = align_dir  + "Aligned.toTranscriptome.out.bam"
@@ -65,7 +64,9 @@ with open(samples_files, "r") as samples_read:
 #In the cases of single end make blank transcripts file.
 rule all:
     input:
-        gtf_files
+        # expand(gene_bam, sample = samples),
+        expand(fastq_1, sample = samples),
+        expand(fastq_2, sample = samples),
 
 
 rule metadata:
@@ -85,7 +86,7 @@ rule species:
     input:
         metadata_files = expand(metadata_files, sample = samples)
     output:
-        species_file = species_file
+        species_file = output_dir + "References/Species.txt"
     conda:
         "envs/species.yaml"
     threads:
@@ -102,7 +103,7 @@ Therefore reference FASTA and GTF files are not interlinked with this pipeline.
 """
 rule references:
     input:
-        species_file = species_file
+        species_file = rules.species.output.species_file
     output:
         gtf_files = gtf_files,
         fa_files = fa_files
@@ -118,6 +119,67 @@ rule references:
         benchmark_dir + "references.bench"
     script:
         "scripts/references.R"
+
+
+"""
+Decompres unpigz is currently Unsnaked
+"""
+rule decompress:
+    params:
+        species = [9606, 10090]
+    # output:
+    #     expand("Results/References/{params.species}/{params.species}.{ext}", ext = ["gtf", "fa"])
+    conda:
+        "envs/decompress.yaml"
+    threads:
+        workflow.cores
+    shell:
+        "unpiz -p {threads} Results/References/{params.species}/*.gz"
+
+
+"""
+STAR idx is currently Unsnaked
+"""
+rule STAR_idx:
+    params:
+        species = [9606, 10090],
+        avg_length = 100
+    output:
+        directory("Results/References/{params.species}/STAR")
+    conda:
+        "envs/star.yaml"
+    threads:
+        workflow.cores
+    shell:
+        "STAR --runThreadN {threads} \
+        --runMode genomeGenerate \
+        --genomeDir Results/References/{params.species}/STAR \
+        --genomeFastaFiles Results/References/{params.species}/{params.species}*.fa \
+        --sjdbGTFfile Results/References/{params.species}/{params.species}.gtf \
+        --sjdbOverhang {params.avg_length} \
+        --outFileNamePrefix Results/References/{params.species}/STAR/{params.species}_"
+
+
+# """ NOT WORKING Inputs are a list, should be single gtf and fa file at a time...
+# RSEM idx is currently Unsnaked
+# """
+# rule RSEM_idx:
+#     input:
+#         gtf = expand("Results/References/{species}/{species}.gtf", species = [9606, 10090]),
+#         fa = expand("Results/References/{species}/{species}.fa", species = [9606, 10090])
+#     params:
+#         species = [9606, 10090]
+#     output:
+#         directory("Results/References/{params.species}/{params.species}/RSEM")
+#     conda:
+#         "envs/rsem.yaml"
+#     shell:
+#         "echo rsem-prepare-reference --gtf {input.gtf} \
+#         --star \
+#         --num-threads {threads} \
+#         {input.fa} \
+#         {output}/{params.species}_"
+
 
         
 """
@@ -159,8 +221,8 @@ rule fastqdump:
         csv_file   = metadata_files,
         sra_file    = sra_files
     output:
-        fastq_1     = temp(fastq_1),
-        fastq_2     = temp(fastq_2)
+        fastq_1     = fastq_1,  ## Should be temp()
+        fastq_2     = fastq_2   ## Should be temp()
     params:
         cmd         = fastq_dump,
         fastq_dir   = fastq_dir
@@ -176,40 +238,57 @@ rule fastqdump:
         "scripts/fastq_dump.py"
 
 
-"""
-STAR_align runs guided alignments on the fastq files extracted from SRAs. 
-It needs an index file for the guided alignment. So these must be built beforehand.
-See the STAR documentation for details. 
-"""
-rule STAR_align:
+# """
+# STAR_align runs guided alignments on the fastq files extracted from SRAs. 
+# It needs an index file for the guided alignment. So these must be built beforehand.
+# See the STAR documentation for details. 
+# """
+# rule STAR_align:
+#     input:
+#         csv_file   = metadata_files,
+#         fastq_1     = fastq_1,
+#         fastq_2     = fastq_2
+#     output:
+#        gene_bam     = gene_bam,
+#        # gene_bam     = temp(gene_bam),
+#        tx_bam       = temp(tx_bam),
+#        chim         = chim,
+#        log_final    = log_final,
+#        log_out      = log_out,
+#        log_progress = temp(log_progress),
+#        out_tab      = out_tab
+#     params:
+#         cmd         = star,
+#         ref_dir     = ref_dir,
+#         star_prefix = align_dir
+#     conda:
+#       "envs/star.yaml"
+#     threads:
+#         ceil(workflow.cores / parallel)  # If set lower, multiple instances of Ref will clogg memory
+#     log:
+#         log_dir + "{sample}.star_align.log"
+#     benchmark:
+#         benchmark_dir + "{sample}.star_align.bench"
+#     script:
+#         "scripts/star_align.py"
+
+rule rsem_expression:
     input:
-        csv_file   = metadata_files,
-        fastq_1     = fastq_1,
-        fastq_2     = fastq_2
+        fastq_1 = fastq_1,
+        fastq_2 = fastq_2
     output:
-       gene_bam     = gene_bam,
-       # gene_bam     = temp(gene_bam),
-       tx_bam       = temp(tx_bam),
-       chim         = chim,
-       log_final    = log_final,
-       log_out      = log_out,
-       log_progress = temp(log_progress),
-       out_tab      = out_tab
-    params:
-        cmd         = star,
-        ref_dir     = ref_dir,
-        threads     = ceil(workflow.cores / parallel),  # Parallel samples not adivsed
-        star_prefix = align_dir
-    conda:
-      "envs/star.yaml"
-    threads:
-        ceil(workflow.cores / parallel)  # If set lower, multiple instances of Ref will clogg memory
-    log:
-        log_dir + "{sample}.star_align.log"
-    benchmark:
-        benchmark_dir + "{sample}.star_align.bench"
-    script:
-        "scripts/star_align.py"
+        "Results/Counts/$species/{sample}_quant"
+    shell:
+    "rsem-calculate-expression --paired-end \
+                           --star \
+                           --gzipped-read-file \
+                           --paired-end \
+                           -p 8 \
+                           Results/Rawdata/{sample}_1.fq.gz \
+                           Results/Rawdata/{sample}_2.fq.gz \
+                           Results/References/$species/indices/rsem \
+                           Results/Counts/$species/{sample}_quant"
+
 
 """
 In case of paired end data, Transcriptome output must be sorted by coordinate,

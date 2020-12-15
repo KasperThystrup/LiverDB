@@ -3,5 +3,5 @@ channels:
  - bioconda
  - conda-forge
 dependencies:
- - pandas = 1.1.4
+ - pandas = 1.1
  - star = 2.7.6a

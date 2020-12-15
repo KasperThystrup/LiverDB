@@ -14,7 +14,7 @@ meta = read_csv(csv_file)
 # tax_id = meta["TaxID"][0]
 layout = meta["LibraryLayout"][0]
 
-fastq_dump_str = " --split-e --outdir %s %s "
+fastq_dump_str = " --split-files --outdir %s %s --gzip "
 
 fastq_dump = cmd + fastq_dump_str %(fastq_dir, sra_file)
 if layout == "SINGLE":

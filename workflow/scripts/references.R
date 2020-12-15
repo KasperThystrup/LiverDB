@@ -50,18 +50,18 @@ locateEnsemblResources <- function(base, release, type, species) {
   file.path(url, target)
 }
 
-downloadEnsemblResources <- function(url_file, taxid, output) {
+downloadEnsemblResources <- function(url_file, taxid, type, path, output) {
 
   # Define destination for target files
-  destdir <- file.path(dirname(output), taxid)
-  fs::dir_create(destdir)
-  destfile <- file.path(destdir, basename(url_file))
+  destfile <- as.character(file.path(path, paste(taxid, type, "gz", sep = ".")))
   download.file(url = url_file, destfile, method = "wget", quiet = TRUE)
-  
+
   # Write downloaded files
-  readr::write_lines(x = destfile, file = output)
+  readr::write_lines(destfile, output, append = TRUE)
+
 }
 
+path <- dirname(species_file)
 
 logger::log_info("Reading: ", species_file)
 species_data <- readr::read_tsv(species_file)
@@ -73,6 +73,7 @@ taxids <- dplyr::pull(species_data, TaxID)
 
 base <- "ftp://ftp.ensembl.org/pub"
 
+readr::write_lines("PIK", fa_files)
 for (i in seq_along(species_names)) {
   species <- species_names[i]
   tax <- taxids[i]
@@ -81,12 +82,12 @@ for (i in seq_along(species_names)) {
   
   logger::log_info("Downloading GTF files for ", species,
                    " writing file paths to:\n  ", gtf_files)
-  downloadEnsemblResources(url_gtf, taxid = tax, output = gtf_files)
+  downloadEnsemblResources(url_file = url_gtf, taxid = tax, type = "gtf", path, output = gtf_files)
   
   logger::log_debug("Locating FASTA file URL")
   url_fasta <- locateEnsemblResources(base, release, type = "fasta", species = species)
   
   logger::log_info("Downloading FASTA files for ", species,
                    " writing file paths to:\n  ", fa_files)
-  downloadEnsemblResources(url_fasta, taxid = tax, output = fa_files)
+  downloadEnsemblResources(url_file = url_fasta, taxid = tax, type = "fa", path, output = fa_files)
 }

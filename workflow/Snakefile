@@ -1,22 +1,13 @@
-# Setup run environment
 from math import ceil
-# from scripts import sradata
-import json
 
-# Setup snakemake background parameters
 configfile: "workflow/config/config.yaml"
 
-# Rule paths and file names --------------------------------------------------
-samples_files                     = config["samples"]
+samples_files = config["samples"]
+taxids_file = config["taxids"]
+Results = config["output_dir"]
+
 email = config["email"]
-release = config["ensembl_release"]
-ref_dir                     = config["ref_dir"]
-parallel = config["parallel"]
-# max_threads                 = config["max_threads"]
-sub_threads                 = config["sub_threads"]
-threshold                   = config["threshold"]
-strandedness                     = config["strandedness"]
-output_dir                  = config["output_dir"]
+ensembl_release = config["ensembl_release"]
 
 # Defining software
 prefetch                    = config["prefetch"]
@@ -25,34 +16,30 @@ star                        = config["star"]
 samtools_sort               = config["samtools_sort"]
 htseq_count                 = config["htseq_count"]
 
-# Defining Input|Output filepaths
-log_dir                    = "info/"
-benchmark_dir              = "info/"
-
-metadata_files = output_dir + "Metadata/{sample}.csv"
-gtf_files = output_dir + "References/gtf_files.txt"
-fa_files = output_dir + "References/fa_files.txt"
-sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"
-fastq_dir                   = output_dir + "Rawdata/Fastq/"
-fastq_1                     = fastq_dir  + "{sample}_1.fastqx   .gz"
-fastq_2                     = fastq_dir  + "{sample}_2.fastq.gz"
-align_dir                   = output_dir + "Rawdata/Aligned/{sample}_"
-gene_bam                    = align_dir  + "Aligned.sortedByCoord.out.bam"
-tx_bam                      = align_dir  + "Aligned.toTranscriptome.out.bam"
-chim                        = align_dir  + "Chimeric.out.junction"
-log_final                   = align_dir  + "Log.final.out"
-log_out                     = align_dir  + "Log.out"
-log_progress                = align_dir  + "Log.progress.out"
-out_tab                     = align_dir  + "SJ.out.tab"
-tx_bam_sorted               = align_dir  + "Aligned.toTranscriptome.sortedByCoord.out.bam"
-# gene_files                  = output_dir + "Rawdata/HTSeq_count/{sample}_genes.tsv"
-# transcript_files            = output_dir + "Rawdata/HTSeq_count/{sample}_transcripts.tsv"
-gene_counts_files           = output_dir + "Rawdata/Counts/{species}/{sample}_genes.tsv"
-transcript_counts_files     = output_dir + "Rawdata/Counts/{species}/{sample}_transcripts.tsv"
-gene_filtered_files         = output_dir + "Filetered_counts/{species}/{sample}_gene_count.tsv"
-transcript_filtered_files   = output_dir + "Filetered_counts/{species}/{sample}_transcript_count.tsv"
-gene_normalized_files       = output_dir + "Counts/{species}/gene_normalized.tsv"
-transcript_normalized_files   = output_dir + "Counts/{species}/transcript_normalized.tsv"
+# metadata_files = output_dir + "Metadata/{sample}.csv"
+# gtf_files = output_dir + "References/gtf_files.txt"
+# fa_files = output_dir + "References/fa_files.txt"
+# sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"
+# fastq_dir                   = output_dir + "Rawdata/Fastq/"
+# fastq_1                     = fastq_dir  + "{sample}_1.fastqx   .gz"
+# fastq_2                     = fastq_dir  + "{sample}_2.fastq.gz"
+# align_dir                   = output_dir + "Rawdata/Aligned/{sample}_"
+# gene_bam                    = align_dir  + "Aligned.sortedByCoord.out.bam"
+# tx_bam                      = align_dir  + "Aligned.toTranscriptome.out.bam"
+# chim                        = align_dir  + "Chimeric.out.junction"
+# log_final                   = align_dir  + "Log.final.out"
+# log_out                     = align_dir  + "Log.out"
+# log_progress                = align_dir  + "Log.progress.out"
+# out_tab                     = align_dir  + "SJ.out.tab"
+# tx_bam_sorted               = align_dir  + "Aligned.toTranscriptome.sortedByCoord.out.bam"
+# # gene_files                  = output_dir + "Rawdata/HTSeq_count/{sample}_genes.tsv"
+# # transcript_files            = output_dir + "Rawdata/HTSeq_count/{sample}_transcripts.tsv"
+# gene_counts_files           = output_dir + "Rawdata/Counts/{species}/{sample}_genes.tsv"
+# transcript_counts_files     = output_dir + "Rawdata/Counts/{species}/{sample}_transcripts.tsv"
+# gene_filtered_files         = output_dir + "Filetered_counts/{species}/{sample}_gene_count.tsv"
+# transcript_filtered_files   = output_dir + "Filetered_counts/{species}/{sample}_transcript_count.tsv"
+# gene_normalized_files       = output_dir + "Counts/{species}/gene_normalized.tsv"
+# transcript_normalized_files   = output_dir + "Counts/{species}/transcript_normalized.tsv"
 
 # Defining input parameters
 with open(samples_files, "r") as samples_read:
@@ -62,37 +49,31 @@ with open(samples_files, "r") as samples_read:
 # Start rules ----------------------------------------------------------------
 # All file rules are included here for trouble shooting purposes. 
 #In the cases of single end make blank transcripts file.
+with open ('taxids.txt', 'r') as tax_read:
+    taxids = tax_read.read().splitlines()
+with open ('samples.txt', 'r') as sample_read:
+    samples = sample_read.read().splitlines()
+
+[x for x in taxids if x.strip()]
+[x for x in samples if x.strip()]
+
 rule all:
     input:
-        # expand(gene_bam, sample = samples),
-        expand(fastq_1, sample = samples),
-        expand(fastq_2, sample = samples),
-
+        expand(Results + "References/{taxid}.gtf", taxid = taxids)
+        
 
 rule metadata:
     params:
         email = email,
         gsm_id = "{sample}"
     output:
-        metadata_files = metadata_files
+        metadata_files = Results + "Metadata/{sample}.csv"
     conda:
         "envs/entrez_direct.yaml"
     threads:
         max(ceil(workflow.cores / 3), 3)  ## At most 3 request pr second, due to Entrez-Eutils restrictions
     shell:
         "esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.metadata_files} -email {params.email}"
-
-rule species:
-    input:
-        metadata_files = expand(metadata_files, sample = samples)
-    output:
-        species_file = output_dir + "References/Species.txt"
-    conda:
-        "envs/species.yaml"
-    threads:
-        1
-    script:
-        "scripts/species.R"
 
 """
 In order to set up indices for STAR aligner and RSEM,
@@ -103,38 +84,35 @@ Therefore reference FASTA and GTF files are not interlinked with this pipeline.
 """
 rule references:
     input:
-        species_file = rules.species.output.species_file
-    output:
-        gtf_files = gtf_files,
-        fa_files = fa_files
+        metadata_files = expand(rules.metadata.output.metadata_files, sample = samples)
     params:
-        release = release
+        release = ensembl_release,
+        taxids = taxids,
+        output_dir = Results + "References"
+    output:
+        gtf_files = expand(Results + "References/{taxid}.gtf.gz", taxid = taxids),
+        fa_files = expand(Results + "References/{taxid}.fa.gz", taxid = taxids)
     conda:
         "envs/references.yaml"
     threads:
         workflow.cores  ## No multi-threading support
-    log:
-        log_dir + "references.log"
-    benchmark:
-        benchmark_dir + "references.bench"
     script:
-        "scripts/references.R"
+        "scripts/references_squid.R"
 
-
-"""
-Decompres unpigz is currently Unsnaked
-"""
+        
 rule decompress:
-    params:
-        species = [9606, 10090]
-    # output:
-    #     expand("Results/References/{params.species}/{params.species}.{ext}", ext = ["gtf", "fa"])
+    input:
+        gtf_files = rules.references.output.gtf_files,
+        fa_files = rules.references.output.fa_files
+    output:
+        gtf_files = expand(Results + "References/{taxid}.gtf", taxid = taxids),
+        fa_files = expand(Results + "References/{taxid}.fa", taxid = taxids)
     conda:
         "envs/decompress.yaml"
     threads:
         workflow.cores
     shell:
-        "unpiz -p {threads} Results/References/{params.species}/*.gz"
+        "unpigz -p {workflow.cores} {input.gtf_files} {input.fa_files}"
 
 
 """

@@ -1,5 +1,6 @@
-samples: samples.txt
 email: xxx@gmail.com # For Eutils -> if they ban your IP, they will warn yoou by email
+taxids: taxids.tx
+samples: samples.txt
 ensembl_release: 102
 prefetch: prefetch
 fastq_dump: fastq-dump

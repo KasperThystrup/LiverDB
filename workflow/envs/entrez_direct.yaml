@@ -1,7 +1,7 @@
 name: entres_direct
 channels:
   - bioconda
-  - anaconda
+  - conda-forge
 dependencies:
   - entrez-direct = 13.9
   - biopython = 1.78

@@ -1,4 +1,4 @@
-configfile: "workflow/config.yaml"
+configfile: "workflow/config/config.yaml"
 
 # Set input file locations
 samples_files = config["samples"]
@@ -20,12 +20,11 @@ with open ('samples.txt', 'r') as sample_read:
 [x for x in taxids if x.strip()]
 [x for x in samples if x.strip()]
 
-ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdump > Compress > Rsem_expression
+ruleorder: Metadata > Srafetch > References > Decompress > Rsem_idx > Fasterqdump > Compress > Rsem_expression
 
 
 rule all:
     input:
-        rsem_idx = expand(Results + "References/{taxid}/Indices/RSEM/idx.transcripts.fa", taxid = taxids),
         rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
         rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
         
@@ -35,7 +34,7 @@ rule Metadata:
         email = email,
         gsm_id = "{sample}"
     output:
-        metadata_files = Results + "Metadata/{sample}.csv"
+        metadata_files = expand(Results + "Metadata/{sample}.csv", sample = samples)
     conda:
         "envs/entrez_direct.yaml"
     group:
@@ -46,22 +45,37 @@ rule Metadata:
         "esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.metadata_files} -email {params.email}"
 
 
+rule Srafetch:
+    input:
+        metadata_files = rules.Metadata.output.metadata_files
+    output:
+        sra_files = temp(expand(Results + "Rawdata/SRA/{sample}.sra", sample = samples))
+    params:
+            cmd = "prefetch"
+    conda:
+            "envs/sra_tools.yaml"
+    group:
+        "Samples"
+    script:
+            "scripts/prefetch.py"
+
+
 rule References:
     input:
-        metadata_files = expand(rules.Metadata.output.metadata_files, sample = samples)  ## Keep expansion, remove comment when below are finished
+        metadata_files = rules.Srafetch.input.metadata_files  ## Keep expansion, remove comment when below are finished
     params:
         release = ensembl_release,
         taxids = taxids,
         output_dir = Results + "References"
     output:
-        gtf_files = expand(Results + "References/{taxid}.gtf.gz", taxid = taxids),   # Remove Expansion
-        fa_files = expand(Results + "References/{taxid}.fa.gz", taxid = taxids)   # Remove Expansion
+        gtf_files = pipe(Results + "References/{taxid}.gtf.gz"),   # Remove Expansion
+        fa_files = pipe(Results + "References/{taxid}.fa.gz")   # Remove Expansion
     conda:
         "envs/references.yaml"
     group:
         "Genome"
     threads:
-        workflow.cores  ## No multi-threading support
+        workflow.cores / parallel_processes  ## No multi-threading support
     script:
         "scripts/references.R"
 
@@ -80,7 +94,7 @@ rule Decompress:
     group:
         "Genome"
     threads:
-        workflow.cores
+        workflow.cores / parallel_processes
     shell:
         "unpigz --force --processes {workflow.cores} {input.gtf_files} {input.fa_files}"
 
@@ -91,7 +105,6 @@ rule Rsem_idx:
         fa_files = rules.Decompress.output.fa_files
     output:
         idx_dir = directory(Results + "References/{taxid}/Indices/RSEM"),
-        idx_transcripts = Results + "References/{taxid}/Indices/RSEM/idx.transcripts.fa"
     conda:
         "envs/rsem.yaml"
     group:
@@ -105,22 +118,6 @@ rule Rsem_idx:
             --num-threads {threads} \
             {input.fa_files} \
             {output.idx_dir}/idx"
-
-
-rule Srafetch:
-    input:
-        metadata_files = rules.Metadata.output.metadata_files,
-        dummy = expand(rules.Rsem_idx.output.idx_transcripts, taxid = taxids)  ## Dependencies to ensure correct rule order
-    output:
-        sra_files = temp(Results + "Rawdata/SRA/{sample}.sra")
-    params:
-            cmd = "prefetch"
-    conda:
-            "envs/sra_tools.yaml"
-    group:
-        "Samples"
-    script:
-            "scripts/prefetch.py"
 
 
 rule Fasterqdump:
@@ -164,12 +161,12 @@ rule Compress:
 
 rule Rsem_expression:
     input:
-        fastq_1 = rules.Compress.output.fastq_1,
-        fastq_2 = rules.Compress.output.fastq_2,
-        rsem_idx = rules.Rsem_idx.output.idx_dir
+        fastq_1 = expand(rules.Compress.output.fastq_1, sample = samples),
+        fastq_2 = expand(rules.Compress.output.fastq_2, sample = samples),
+        rsem_idx = expand(rules.Rsem_idx.output.idx_dir, taxid = taxids)
     output:
-        rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
-        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"
+        rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
+        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
     params:
         rsem_prefix = Results + "Counts/$species/{sample}_rsem"
     conda:

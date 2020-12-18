@@ -1,6 +1,6 @@
 `%>%` <- dplyr::`%>%`  ## Circumventing library() calls for the pipe operator
 options(readr.num_columns = 0)
-logger::log_threshold(logger::DEBUG)
+logger::log_threshold(logger::INFO)
 
 metadata_files <- snakemake@input[["metadata_files"]]
 release <- snakemake@params[["release"]]

@@ -1,5 +1,5 @@
 email: xxx@gmail.com # For Eutils -> if they ban your IP, they will warn yoou by email
-taxids: taxids.tx
+taxids: taxids.txt
 samples: samples.txt
 ensembl_release: 102
 compress: 1  # gz compression on fastq files, set to 0 to turn off (might speed up pipeline)

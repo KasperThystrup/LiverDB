@@ -26,6 +26,7 @@ ruleorder: Metadata > Srafetch > References > Decompress > Rsem_idx > Fasterqdum
 
 rule all:
     input:
+        rsem_idx = expand(Results + "References/{taxid}/Indices/RSEM/idx.transcripts.fa", taxid = taxids),
         rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
         rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
         
@@ -104,8 +105,10 @@ rule Rsem_idx:
     input:
         gtf_files = rules.Decompress.output.gtf_files,
         fa_files = rules.Decompress.output.fa_files
+    params:
+        idx_dir = Results + "References/{taxid}/Indices/RSEM/"
     output:
-        idx_dir = directory(Results + "References/{taxid}/Indices/RSEM"),
+        tx_fa = Results + "References/{taxid}/Indices/RSEM/idx.transcripts.fa"
     conda:
         "envs/rsem.yaml"
     group:
@@ -118,7 +121,7 @@ rule Rsem_idx:
             --star \
             --num-threads {threads} \
             {input.fa_files} \
-            {output.idx_dir}/idx"
+            {params.idx_dir}/idx"
 
 
 rule Fasterqdump:
@@ -164,7 +167,7 @@ rule Rsem_expression:
     input:
         fastq_1 = expand(rules.Compress.output.fastq_1, sample = samples),
         fastq_2 = expand(rules.Compress.output.fastq_2, sample = samples),
-        rsem_idx = expand(rules.Rsem_idx.output.idx_dir, taxid = taxids)
+        # rsem_idx = expand(rules.Rsem_idx.output.idx_dir, taxid = taxids)
     output:
         rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
         rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)

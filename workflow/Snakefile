@@ -1,385 +1,281 @@
-# Setup run environment
-from math import ceil
-# from scripts import sradata
-import json
-
-# Setup snakemake background parameters
+from snakemake import shell
 configfile: "workflow/config/config.yaml"
 
-# Rule paths and file names --------------------------------------------------
-samples_files                     = config["samples"]
+# Set input file locations
+samples_files = config["samples"]
+taxids_file = config["taxids"]
+Results = config["output_dir"]
+
+# Set user parameters
+parallel_processes = config["parallel_processes"]
 email = config["email"]
-release = config["ensembl_release"]
-ref_dir                     = config["ref_dir"]
-parallel = config["parallel"]
-# max_threads                 = config["max_threads"]
-sub_threads                 = config["sub_threads"]
-threshold                   = config["threshold"]
-strandedness                     = config["strandedness"]
-output_dir                  = config["output_dir"]
-
-# Defining software
-prefetch                    = config["prefetch"]
-fastq_dump                  = config["fastq_dump"]
-star                        = config["star"]
-samtools_sort               = config["samtools_sort"]
-htseq_count                 = config["htseq_count"]
-
-# Defining Input|Output filepaths
-log_dir                    = "info/"
-benchmark_dir              = "info/"
-
-metadata_files = output_dir + "Metadata/{sample}.csv"
-gtf_files = output_dir + "References/gtf_files.txt"
-fa_files = output_dir + "References/fa_files.txt"
-sra_files                   = output_dir + "Rawdata/SRA/{sample}.sra"
-fastq_dir                   = output_dir + "Rawdata/Fastq/"
-fastq_1                     = fastq_dir  + "{sample}_1.fastqx   .gz"
-fastq_2                     = fastq_dir  + "{sample}_2.fastq.gz"
-align_dir                   = output_dir + "Rawdata/Aligned/{sample}_"
-gene_bam                    = align_dir  + "Aligned.sortedByCoord.out.bam"
-tx_bam                      = align_dir  + "Aligned.toTranscriptome.out.bam"
-chim                        = align_dir  + "Chimeric.out.junction"
-log_final                   = align_dir  + "Log.final.out"
-log_out                     = align_dir  + "Log.out"
-log_progress                = align_dir  + "Log.progress.out"
-out_tab                     = align_dir  + "SJ.out.tab"
-tx_bam_sorted               = align_dir  + "Aligned.toTranscriptome.sortedByCoord.out.bam"
-# gene_files                  = output_dir + "Rawdata/HTSeq_count/{sample}_genes.tsv"
-# transcript_files            = output_dir + "Rawdata/HTSeq_count/{sample}_transcripts.tsv"
-gene_counts_files           = output_dir + "Rawdata/Counts/{species}/{sample}_genes.tsv"
-transcript_counts_files     = output_dir + "Rawdata/Counts/{species}/{sample}_transcripts.tsv"
-gene_filtered_files         = output_dir + "Filetered_counts/{species}/{sample}_gene_count.tsv"
-transcript_filtered_files   = output_dir + "Filetered_counts/{species}/{sample}_transcript_count.tsv"
-gene_normalized_files       = output_dir + "Counts/{species}/gene_normalized.tsv"
-transcript_normalized_files   = output_dir + "Counts/{species}/transcript_normalized.tsv"
-
-# Defining input parameters
-with open(samples_files, "r") as samples_read:
-    samples = samples_read.read().splitlines()
+ensembl_release = config["ensembl_release"]
+compress = config["compress"]
 
 
-# Start rules ----------------------------------------------------------------
-# All file rules are included here for trouble shooting purposes. 
-#In the cases of single end make blank transcripts file.
+with open ('taxids.txt', 'r') as tax_read:
+    taxids = tax_read.read().splitlines()
+with open ('samples.txt', 'r') as sample_read:
+    samples = sample_read.read().splitlines()
+
+[x for x in taxids if x.strip()]
+[x for x in samples if x.strip()]
+
+ruleorder: Metadata > Srafetch > References > Decompress > Rsem_idx > Fasterqdump > Compress > Rsem_expression
+
+
 rule all:
     input:
-        # expand(gene_bam, sample = samples),
-        expand(fastq_1, sample = samples),
-        expand(fastq_2, sample = samples),
-
-
-rule metadata:
+        rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
+        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
+        
+rule Metadata:
     params:
         email = email,
-        gsm_id = "{sample}"
+        samples = samples,
+        output_dir = Results + "Metadata/"
     output:
-        metadata_files = metadata_files
+        metadata_files = expand(Results + "Metadata/{sample}.csv", sample = samples)
     conda:
         "envs/entrez_direct.yaml"
-    threads:
-        max(ceil(workflow.cores / 3), 3)  ## At most 3 request pr second, due to Entrez-Eutils restrictions
-    shell:
-        "esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.metadata_files} -email {params.email}"
-
-rule species:
-    input:
-        metadata_files = expand(metadata_files, sample = samples)
-    output:
-        species_file = output_dir + "References/Species.txt"
-    conda:
-        "envs/species.yaml"
-    threads:
-        1
+    group:
+        "Metadata"
     script:
-        "scripts/species.R"
+        "scripts/entrez_direct.py"
 
-"""
-In order to set up indices for STAR aligner and RSEM,
-Ensembl reference genomes are downloaded according to the release specified in the config file.
-!Multiple FASTA file have been observed for some species, but currently, these reference styles aren't supported!
-Locations to the downloaded files are printed to text files, and are specified as output by the rule.
-Therefore reference FASTA and GTF files are not interlinked with this pipeline.
-"""
-rule references:
+        
+
+
+rule Srafetch:
     input:
-        species_file = rules.species.output.species_file
+        metadata_files = rules.Metadata.output.metadata_files
     output:
-        gtf_files = gtf_files,
-        fa_files = fa_files
+        sra_files = temp(expand(Results + "Rawdata/SRA/{sample}.sra", sample = samples))
     params:
-        release = release
+            cmd = "prefetch"
+    conda:
+            "envs/sra_tools.yaml"
+    group:
+        "Samples"
+    script:
+            "scripts/prefetch.py"
+
+
+rule References:
+    input:
+        metadata_files = rules.Srafetch.input.metadata_files  ## Keep expansion, remove comment when below are finished
+    params:
+        release = ensembl_release,
+        taxids = taxids,
+        output_dir = Results + "References"
+    output:
+        gtf_files = pipe(Results + "References/{taxid}.gtf.gz"),   # Remove Expansion
+        fa_files = pipe(Results + "References/{taxid}.fa.gz")   # Remove Expansion
     conda:
         "envs/references.yaml"
+    group:
+        "Genome"
     threads:
-        workflow.cores  ## No multi-threading support
-    log:
-        log_dir + "references.log"
-    benchmark:
-        benchmark_dir + "references.bench"
+        workflow.cores / parallel_processes  ## No multi-threading support
     script:
         "scripts/references.R"
 
-
-"""
-Decompres unpigz is currently Unsnaked
-"""
-rule decompress:
-    params:
-        species = [9606, 10090]
-    # output:
-    #     expand("Results/References/{params.species}/{params.species}.{ext}", ext = ["gtf", "fa"])
+        
+rule Decompress:
+    input:
+        gtf_files = rules.References.output.gtf_files,
+        fa_files = rules.References.output.fa_files
+    output:
+        gtf_files = Results + "References/{taxid}.gtf",  ## Should be temp
+        fa_files = Results + "References/{taxid}.fa"  ## Should be temp
+    wildcard_constraints:
+        taxid = "\d+"
     conda:
         "envs/decompress.yaml"
+    group:
+        "Genome"
     threads:
-        workflow.cores
+        workflow.cores / parallel_processes
     shell:
-        "unpiz -p {threads} Results/References/{params.species}/*.gz"
+        "unpigz --force --processes {workflow.cores} {input.gtf_files} {input.fa_files}"
 
 
-"""
-STAR idx is currently Unsnaked
-"""
-rule STAR_idx:
-    params:
-        species = [9606, 10090],
-        avg_length = 100
+rule Rsem_idx:
+    input:
+        gtf_files = rules.Decompress.output.gtf_files,
+        fa_files = rules.Decompress.output.fa_files
     output:
-        directory("Results/References/{params.species}/STAR")
+        idx_dir = directory(Results + "References/{taxid}/Indices/RSEM"),
     conda:
-        "envs/star.yaml"
+        "envs/rsem.yaml"
+    group:
+        "Genome"
     threads:
         workflow.cores
     shell:
-        "STAR --runThreadN {threads} \
-        --runMode genomeGenerate \
-        --genomeDir Results/References/{params.species}/STAR \
-        --genomeFastaFiles Results/References/{params.species}/{params.species}*.fa \
-        --sjdbGTFfile Results/References/{params.species}/{params.species}.gtf \
-        --sjdbOverhang {params.avg_length} \
-        --outFileNamePrefix Results/References/{params.species}/STAR/{params.species}_"
+        "rsem-prepare-reference \
+            --gtf {input.gtf_files} \
+            --star \
+            --num-threads {threads} \
+            {input.fa_files} \
+            {output.idx_dir}/idx"
 
 
-# """ NOT WORKING Inputs are a list, should be single gtf and fa file at a time...
-# RSEM idx is currently Unsnaked
-# """
-# rule RSEM_idx:
-#     input:
-#         gtf = expand("Results/References/{species}/{species}.gtf", species = [9606, 10090]),
-#         fa = expand("Results/References/{species}/{species}.fa", species = [9606, 10090])
-#     params:
-#         species = [9606, 10090]
-#     output:
-#         directory("Results/References/{params.species}/{params.species}/RSEM")
-#     conda:
-#         "envs/rsem.yaml"
-#     shell:
-#         "echo rsem-prepare-reference --gtf {input.gtf} \
-#         --star \
-#         --num-threads {threads} \
-#         {input.fa} \
-#         {output}/{params.species}_"
-
-
+rule Fasterqdump:
+    input:
+        metadata_files = rules.Metadata.output.metadata_files,
+        sra_files = rules.Srafetch.output.sra_files
+    output:
+            fastq_1 = pipe(Results + "Rawdata/Fastq/{sample}_1.fastq"),  ## Should be temp()??
+            fastq_2 = pipe(Results + "Rawdata/Fastq/{sample}_2.fastq")   ## Should be temp()??
+    params:
+            cmd = "fasterq-dump",
+            cmd2 = "pigz",
+            compress = compress,
+            fastq_dir = Results + "Rawdata/Fastq"
+    conda:
+        "envs/sra_tools.yaml"
+    group:
+        "Fetch"
+    threads:
+        workflow.cores / parallel_processes
+    script:
+        "scripts/fasterq_dump.py"
         
-"""
-The download sequence data rule downloads the SRA using the link stored in the METADATA. 
-"""
-rule srafetch: 
-    input: 
-        csv_file   = metadata_files
-    output:
-        sra_file    = temp(sra_files)
-    params:
-        cmd         = prefetch
-    conda:
-      "envs/sra_tools.yaml"
-    threads:
-        1  ## No multi-threading support, instead samples are run simultanously
-    log:
-        log_dir + "{sample}.srafetch.log"
-    benchmark:
-        benchmark_dir + "{sample}.srafetch.bench"
-    script:
-        "scripts/sraprefetch.py"
-
-"""
-The fastqdump rule simply extracts the fastq files from the SRA files. 
-Fastq files are large, so these are deleted when the rules calling fastqdump are finished.
-
-Links trouble shooting the problem: 
-https://edwards.sdsu.edu/research/fastq-dump/
-https://www.biostars.org/p/156909/
-I have no idea why -M 0 keeps the lines equal but it does. 
-Nevermind -M 0 allows for sequences short enought to be illegal in STAR, FML
-
-@TODO: Think about adding output as gziped fastq. 
-fastq-dump --gzip --skip-technical  --readids --dumpbase --split-files --clip sra_filename
-"""
-rule fastqdump:
+rule Compress:
     input:
-        csv_file   = metadata_files,
-        sra_file    = sra_files
+        fastq_1 = rules.Fasterqdump.output.fastq_1,
+        fastq_2 = rules.Fasterqdump.output.fastq_2
     output:
-        fastq_1     = fastq_1,  ## Should be temp()
-        fastq_2     = fastq_2   ## Should be temp()
-    params:
-        cmd         = fastq_dump,
-        fastq_dir   = fastq_dir
-    conda:
-      "envs/sra_tools.yaml"
+        fastq_1 = temp(Results + "Rawdata/Fastq/{sample}_1.fastq.gz"),
+        fastq_2 = temp(Results + "Rawdata/Fastq/{sample}_2.fastq.gz")
     threads:
-        1  ## No multi-threading support, instead samples are run simultanously
-    log:
-        log_dir + "{sample}.fastqdump.log"
-    benchmark:
-        benchmark_dir + "{sample}.fastqdump.bench"
-    script:
-        "scripts/fastq_dump.py"
-
-
-# """
-# STAR_align runs guided alignments on the fastq files extracted from SRAs. 
-# It needs an index file for the guided alignment. So these must be built beforehand.
-# See the STAR documentation for details. 
-# """
-# rule STAR_align:
-#     input:
-#         csv_file   = metadata_files,
-#         fastq_1     = fastq_1,
-#         fastq_2     = fastq_2
-#     output:
-#        gene_bam     = gene_bam,
-#        # gene_bam     = temp(gene_bam),
-#        tx_bam       = temp(tx_bam),
-#        chim         = chim,
-#        log_final    = log_final,
-#        log_out      = log_out,
-#        log_progress = temp(log_progress),
-#        out_tab      = out_tab
-#     params:
-#         cmd         = star,
-#         ref_dir     = ref_dir,
-#         star_prefix = align_dir
-#     conda:
-#       "envs/star.yaml"
-#     threads:
-#         ceil(workflow.cores / parallel)  # If set lower, multiple instances of Ref will clogg memory
-#     log:
-#         log_dir + "{sample}.star_align.log"
-#     benchmark:
-#         benchmark_dir + "{sample}.star_align.bench"
-#     script:
-#         "scripts/star_align.py"
-
-rule rsem_expression:
-    input:
-        fastq_1 = fastq_1,
-        fastq_2 = fastq_2
-    output:
-        "Results/Counts/$species/{sample}_quant"
+        workflow.cores / parallel_processes
+    group:
+        "Fetch"
     shell:
-    "rsem-calculate-expression --paired-end \
-                           --star \
-                           --gzipped-read-file \
-                           --paired-end \
-                           -p 8 \
-                           Results/Rawdata/{sample}_1.fq.gz \
-                           Results/Rawdata/{sample}_2.fq.gz \
-                           Results/References/$species/indices/rsem \
-                           Results/Counts/$species/{sample}_quant"
+        "pigz \
+            --force \
+            --processes {threads} \
+            {input.fastq_1} {input.fastq_2}"
 
 
-"""
-In case of paired end data, Transcriptome output must be sorted by coordinate,
-as it is a requirement for HTSeq-counts to have data sorted by reads or coordinates
-"""
-rule tx_sort:
+rule Rsem_expression:
     input:
-        csv_file       = metadata_files,
-        tx_bam          = tx_bam
+        fastq_1 = expand(rules.Compress.output.fastq_1, sample = samples),
+        fastq_2 = expand(rules.Compress.output.fastq_2, sample = samples),
+        rsem_idx = expand(rules.Rsem_idx.output.idx_dir, taxid = taxids)
     output:
-        tx_bam_sorted   = tx_bam_sorted
-        # tx_bam_sorted   = temp(tx_bam_sorted)
+        rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
+        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
     params:
-        cmd             = samtools_sort
+        rsem_prefix = Results + "Counts/$species/{sample}_rsem"
     conda:
-      "envs/samtools.yaml"
+        "envs/rsem.yaml"
+    group:
+        "Quantification"
     threads:
-        ceil(workflow.cores / parallel)
-    log:
-        log_dir + "{sample}.tx_sort.log"
-    benchmark:
-        benchmark_dir + "{sample}.tx_sort.bench"
-    script:
-        "scripts/tx_sort.py"
-
-
-"""
-makeHTSeqTables extracts counts from the STAR alignment for genes if a single end SRA is used, 
-or genes and transcripts if a paired end SRA is used. 
-"""
-rule count_reads:
-    input:
-        csv_file               = metadata_files,
-        gene_bam                = gene_bam,
-        tx_bam_sorted           = tx_bam_sorted
-    output:
-       gene_counts_files        = gene_counts_files,
-       transcript_counts_files  = transcript_counts_files
-    params:
-        cmd                     = htseq_count,
-        ref_dir                 = ref_dir,
-        strandedness            = strandedness
-    conda:
-      "envs/samtools.yaml"
-    threads:
-        ceil(workflow.cores / parallel)
-    log:
-        log_dir + "{species}.{sample}.count_reads.log"
-    benchmark:
-        benchmark_dir + "{species}.{sample}.count_reads.bench"
-    script:
-        "scripts/count_reads.py"
-
-
-"""
-Samples with high zero inflation could skewer the normalization.
-Zero contents in the samples are screened for zero contents,
-and samples with a higher zero contents than a set threshold are dismissed.
-"""
-rule zero_intolerance:
-    input:
-        gene_counts_files           = gene_counts_files,
-        transcript_counts_files     = transcript_counts_files
-    output:
-        gene_filtered_files         = gene_filtered_files,
-        transcript_filtered_files   = transcript_filtered_files
-    params:
-        threshold                   = threshold,
-        threads                     = sub_threads
-    conda:
-        "envs/R.yaml"
-    threads:
-        ceil(workflow.cores / parallel)
-    script:
-        "scripts/zero_intolerance.R"
+        workflow.cores / parallel_processes
+    shell:
+        "rsem-calculate-expression --paired-end \
+            --star \
+            --paired-end \
+            --num-threads {threads} \
+            {input.fastq_1} \
+            {input.fastq_2} \
+            {params.rsem_idx} \
+            {params.rsem_prefix}"
 
 # """
-# Normalize samples counts
+# In case of paired end data, Transcriptome output must be sorted by coordinate,
+# as it is a requirement for HTSeq-counts to have data sorted by reads or coordinates
 # """
-# rule normalize_counts:
+# rule tx_sort:
 #     input:
-#         gene_filtered_files         = expand(gene_filtered_files, sample = samples, species = species),
-#         transcript_filtered_files   = expand(transcript_filtered_files, sample = samples, species = species)
+#         csv_file       = metadata_files,
+#         tx_bam          = tx_bam
 #     output:
-#         gene_normalized_files       = gene_normalized_files,
-#         transcript_normalized_files = transcript_normalized_files
+#         tx_bam_sorted   = tx_bam_sorted
+#         # tx_bam_sorted   = temp(tx_bam_sorted)
 #     params:
+#         cmd             = samtools_sort
+#     conda:
+#       "envs/samtools.yaml"
+#     threads:
+#         ceil(workflow.cores / parallel)
+#     log:
+#         log_dir + "{sample}.tx_sort.log"
+#     benchmark:
+#         benchmark_dir + "{sample}.tx_sort.bench"
+#     script:
+#         "scripts/tx_sort.py"
+
+
+# """
+# makeHTSeqTables extracts counts from the STAR alignment for genes if a single end SRA is used, 
+# or genes and transcripts if a paired end SRA is used. 
+# """
+# rule count_reads:
+#     input:
+#         csv_file               = metadata_files,
+#         gene_bam                = gene_bam,
+#         tx_bam_sorted           = tx_bam_sorted
+#     output:
+#        gene_counts_files        = gene_counts_files,
+#        transcript_counts_files  = transcript_counts_files
+#     params:
+#         cmd                     = htseq_count,
+#         ref_dir                 = ref_dir,
+#         strandedness            = strandedness
+#     conda:
+#       "envs/samtools.yaml"
+#     threads:
+#         ceil(workflow.cores / parallel)
+#     log:
+#         log_dir + "{species}.{sample}.count_reads.log"
+#     benchmark:
+#         benchmark_dir + "{species}.{sample}.count_reads.bench"
+#     script:
+#         "scripts/count_reads.py"
+
+
+# """
+# Samples with high zero inflation could skewer the normalization.
+# Zero contents in the samples are screened for zero contents,
+# and samples with a higher zero contents than a set threshold are dismissed.
+# """
+# rule zero_intolerance:
+#     input:
+#         gene_counts_files           = gene_counts_files,
+#         transcript_counts_files     = transcript_counts_files
+#     output:
+#         gene_filtered_files         = gene_filtered_files,
+#         transcript_filtered_files   = transcript_filtered_files
+#     params:
+#         threshold                   = threshold,
 #         threads                     = sub_threads
 #     conda:
 #         "envs/R.yaml"
 #     threads:
-#         round(max_threads / sub_threads) ## Allows simultanous sample processing
+#         ceil(workflow.cores / parallel)
 #     script:
-#         "scripts/normalize_counts.R"
+#         "scripts/zero_intolerance.R"
+
+# # """
+# # Normalize samples counts
+# # """
+# # rule normalize_counts:
+# #     input:
+# #         gene_filtered_files         = expand(gene_filtered_files, sample = samples, species = species),
+# #         transcript_filtered_files   = expand(transcript_filtered_files, sample = samples, species = species)
+# #     output:
+# #         gene_normalized_files       = gene_normalized_files,
+# #         transcript_normalized_files = transcript_normalized_files
+# #     params:
+# #         threads                     = sub_threads
+# #     conda:
+# #         "envs/R.yaml"
+# #     threads:
+# #         round(max_threads / sub_threads) ## Allows simultanous sample processing
+# #     script:
+# #         "scripts/normalize_counts.R"

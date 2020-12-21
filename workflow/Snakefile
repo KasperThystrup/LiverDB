@@ -1,3 +1,4 @@
+from snakemake import shell
 configfile: "workflow/config/config.yaml"
 
 # Set input file locations
@@ -28,21 +29,21 @@ rule all:
         rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
         rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
         
-
 rule Metadata:
     params:
         email = email,
-        gsm_id = "{sample}"
+        samples = samples,
+        output_dir = Results + "Metadata/"
     output:
         metadata_files = expand(Results + "Metadata/{sample}.csv", sample = samples)
     conda:
         "envs/entrez_direct.yaml"
     group:
         "Metadata"
-    threads:
-        max(workflow.cores / 3, 3)  ## Ensure that no more than 3 request pr second due to Entrez-Eutils restrictions
-    shell:
-        "esearch -db sra -query {params.gsm_id} | efetch -format runinfo > {output.metadata_files} -email {params.email}"
+    script:
+        "scripts/entrez_direct.py"
+
+        
 
 
 rule Srafetch:

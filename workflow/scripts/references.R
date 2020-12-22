@@ -2,10 +2,10 @@
 options(readr.num_columns = 0)
 logger::log_threshold(logger::INFO)
 
-metadata_files <- snakemake@input[["metadata_files"]]
+detected_species <- snakemake@input[["detected_species"]]
 release <- snakemake@params[["release"]]
-taxids <- snakemake@params[["taxids"]]
-output_dir <- snakemake@params[["output_dir"]]
+gtf_files <- snakemake@output[["gtf_files"]]
+fa_files <- snakemake@output[["fa_files"]]
 
 
 locateEnsemblResources <- function(base, release, type, species) {
@@ -24,12 +24,12 @@ locateEnsemblResources <- function(base, release, type, species) {
          "  Use either type = `gtf` or `fasta`!")
   }
   
-  logger::log_debug("Fetching links for GTF files for ", species)
+  logger::log_debug("Fetching links for ", species)
   ftp <- RCurl::getURL(url = paste0(url, "/"), dirlistonly = TRUE)
   files <- strsplit(x = ftp, split = "\n")[[1]]
   
   logger::log_debug(
-    "Identififying target", toupper(type), "file from:\n",
+    "Identififying target ", toupper(type), " file from:\n",
     paste(files, collapse = "\n")
   )
   
@@ -38,21 +38,19 @@ locateEnsemblResources <- function(base, release, type, species) {
   # Ensure that at least one gtf file is located
   if (length(target) < 1) {
     stop(
-      "No ", toupper(type), " files were found.\n",
-      "  Ensure that the base link is correct:\n", base
+      "No ", toupper(type), " files were found at:\n", url,
+      "  Ensure that the base link and the url is correct:\n", base
     )
   }
   
   file.path(url, target)
 }
 
-downloadEnsemblResources <- function(url_file, taxid, type, path) {
+downloadEnsemblResources <- function(url_file, output) {
 
-  # Define destination for target files
-  destfile <- as.character(file.path(path, paste(taxid, type, "gz", sep = ".")))
-  
-  logger::log_debug(paste("Downloading", type, "from url:", url_file, "\nSaving file as:", destfile))
-  download.file(url = url_file, destfile, method = "wget", quiet = TRUE)
+  # Define destination for target files  
+  logger::log_debug(paste("Downloading from url:", url_file, "\nSaving file as:", output))
+  download.file(url = url_file, output, method = "wget", quiet = TRUE)
   
 }
 
@@ -65,44 +63,21 @@ downloadEnsemblResources <- function(url_file, taxid, type, path) {
 # setwd("~/tmp/test")
 # ##
 
+species <- readr::read_tsv(detected_species)
 
-species_full <- lapply(metadata_files, function(meta_file) {
-  meta = readr::read_csv(meta_file)
-  dplyr::select(meta, TaxID, ScientificName)
-}) %>%
-  do.call(what = rbind)
-
-# Reduce table to contain unique entries
-species <- dplyr::summarise(species_full,
-                            TaxID = unique(TaxID),
-                            
-                            # Substitute spaces to underscores
-                            ScientificName = unique(
-                              gsub(x = ScientificName, pattern = " ", replacement = "_")
-                            )
-)
 base <- "ftp://ftp.ensembl.org/pub"
 
-missing <- c()
 for (i in 1:nrow(species)) {
-  browser()
   tax <- dplyr::pull(species[i, ], TaxID)
   name <- dplyr::pull(species[i, ], ScientificName)
-  
+
   logger::log_debug("Detected following species:", tax, " - ", name)
   logger::log_info("Downloading GTF and FASTA files for ", name)
-  if (tax %in% taxids) {
-    url_gtf <- locateEnsemblResources(base, release, type = "gtf", species = name)
-    downloadEnsemblResources(url_file = url_gtf, taxid = tax, type = "gtf", path = output_dir)
-    
-    url_fa <- locateEnsemblResources(base, release, type = "fa", species = name)
-    downloadEnsemblResources(url_file = url_fa, taxid = tax, type = "fa", path = output_dir)
-  } else {
-    missing <- c(missing, taxid)
-  }
+  
+  url_gtf <- locateEnsemblResources(base, release, type = "gtf", species = name)
+  downloadEnsemblResources(url_file = url_gtf, output = gtf_files)
+
+  url_fa <- locateEnsemblResources(base, release, type = "fa", species = name)
+  downloadEnsemblResources(url_file = url_fa, output = fa_files)
+
 }
-if (length(missing) > 0)
-  stop(paste(
-    'The following TaxIDs detected in the samples metadata was not specified in the "taxid.txt" file:', missing,
-    'Please update the "taxids.txt" file, or check your sample selection for unintended speciments'
-  ))

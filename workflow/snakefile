@@ -1,0 +1,226 @@
+from snakemake import shell
+configfile: "workflow/config/config.yaml"
+
+# Set input file locations
+samples_files = config["samples"]
+taxids_file = config["taxids"]
+Results = config["output_dir"]
+
+# Set user parameters
+parallel_processes = config["parallel_processes"]
+email = config["email"]
+ensembl_release = config["ensembl_release"]
+compress = config["compress"]
+
+
+with open ('taxids.txt', 'r') as tax_read:
+    taxids = tax_read.read().splitlines()
+with open ('samples.txt', 'r') as sample_read:
+    samples = sample_read.read().splitlines()
+
+[x for x in taxids if x.strip()]
+[x for x in samples if x.strip()]
+
+ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdump > Compress
+
+
+rule all:
+    input:
+        rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
+        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
+
+
+"""
+Sample file metadata are collected through Entrez-direct, by querying sample IDs against the sra database.
+RunInfo data are requested and saved as .csv files
+"""
+rule Metadata:
+    params:
+        samples = "{sample}"
+    output:
+        metadata_files = Results + "Metadata/{sample}.csv"
+    conda:
+        "envs/entrez_direct.yaml"
+    group:
+        "Metadata"
+    shell:
+        "esearch -db sra -query {params.sample} -email {params.email} | efetch -format runinfo > {output.metadata_file}"
+
+
+"""
+As the user must provide taxids in the taxids.txt file, there is a chance of human errors.
+Sample taxids and Scientific namesare collected and compared against the user provided taxids.
+As output, a tab-separated file containing taxids, along with the scientific names are provided.
+"""
+rule Checkspecies:
+    input:
+        metadata_files = expand(rules.Metadata.output.metadata_files, sample = samples)
+    params:
+        taxids = taxids
+    output:
+        detected_species = Results + "Metadata/detectedSpecies.txt"
+    script:
+        "scripts/checkspecies.R"
+
+
+"""
+Using the Scientific names provided from the Checkspecies rule, Ensembl gtf and fasta files are downloaded for each species.
+"""
+rule References:
+    input:
+        detected_species = rules.Checkspecies.output.detected_species
+    params:
+        release = ensembl_release,
+    output:
+        gtf_files = Results + "References/{taxid}.gtf.gz",   # Remove Expansion
+        fa_files = Results + "References/{taxid}.fa.gz"   # Remove Expansion
+    conda:
+        "envs/references.yaml"
+    group:
+        "Genome"
+    threads:
+        workflow.cores / parallel_processes  ## No multi-threading support
+    script:
+        "scripts/references.R"
+
+
+"""
+Reference files are decompressed using pigz, in order to enable index generation with STAR and possibly also RSEM
+"""
+rule Decompress:
+    input:
+        gtf_files = rules.References.output.gtf_files,
+        fa_files = rules.References.output.fa_files
+    output:
+        gtf_files = temp(Results + "References/{taxid}.gtf"),
+        fa_files = temp(Results + "References/{taxid}.fa")
+    wildcard_constraints:
+        taxid = "\d+"
+    conda:
+        "envs/decompress.yaml"
+    group:
+        "Genome"
+    threads:
+        workflow.cores / parallel_processes
+    shell:
+        "unpigz --force --processes {workflow.cores} {input.gtf_files} {input.fa_files}"
+
+
+"""
+Genome and transcript indices are generated for enabling downstream gene and transcript quantification.
+"""
+rule Rsem_idx:
+    input:
+        gtf_files = rules.Decompress.output.gtf_files,
+        fa_files = rules.Decompress.output.fa_files      
+    output:
+        idx_dir = directory(Results + "References/{taxid}/Indices/RSEM/"),
+        idx_tx = Results + "References/{taxid}/Indices/RSEM/rsem.transcripts.fa",
+        idx_fa = Results + "References/{taxid}/Indices/RSEM/rsem.idx.fa",
+        idx_n2g = Results + "References/{taxid}/Indices/RSEM/rsem.n2g.idx.fa"        
+    conda:
+        "envs/rsem.yaml"
+    group:
+        "Genome"
+    threads:
+        workflow.cores
+    shell:
+        "rsem-prepare-reference \
+            --gtf {input.gtf_files} \
+            --star \
+            --num-threads {threads} \
+            {input.fa_files} \
+            {output.idx_dir}/rsem"
+
+
+"""
+Sample metadata are used to optain SRR numbers for each sample. SRA-tools prefetch are used to download .sra files.
+"""
+rule Srafetch:
+    input:
+        metadata_files = rules.Metadata.output.metadata_files
+    output:
+        sra_files = temp(Results + "Rawdata/SRA/{sample}.sra")
+    params:
+        cmd = "prefetch"
+    conda:
+        "envs/sra_tools.yaml"
+    group:
+        "Samples"
+    script:
+        "scripts/prefetch.py"
+
+
+"""
+SRA-tools Fasterq-dump are used to extract Read information into paired-end mate fastq files, enabling multithreaded processing.
+"""
+rule Fasterqdump:
+    input:
+        metadata_files = rules.Metadata.output.metadata_files,
+        sra_files = rules.Srafetch.output.sra_files
+    output:
+            fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
+            fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
+    params:
+            cmd = "fasterq-dump"
+    conda:
+        "envs/sra_tools.yaml"
+    group:
+        "Samples"
+    threads:
+        workflow.cores / parallel_processes
+    script:
+        "scripts/fasterq_dump.py"
+
+
+"""
+Sample fastq files are compressed, to save disk space.
+"""
+rule Compress:
+    input:
+        fastq_1 = rules.Fasterqdump.output.fastq_1,
+        fastq_2 = rules.Fasterqdump.output.fastq_2
+    output:
+        fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq.gz",  ##should be temp
+        fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq.gz"  ##should be temp
+    threads:
+        workflow.cores / parallel_processes
+    conda:
+      "envs/decompress.yaml"
+    group:
+        "Samples"
+    shell:
+        "pigz \
+            --force \
+            --processes {threads} \
+            {input.fastq_1} {input.fastq_2}"
+
+
+"""
+Gene and transcript quantifications are calculated using RSEM.
+"""
+rule Rsem_expression:
+    input:
+        fastq_1 = rules.Compress.output.fastq_1,
+        fastq_2 = rules.Compress.output.fastq_2,
+        rsem_idx = directory(rules.Rsem_idx.output.idx_dir)
+    output:
+        rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
+        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"
+    params:
+        rsem_prefix = Results + "Counts/$species/{sample}_rsem"
+    conda:
+        "envs/rsem.yaml"
+    group:
+        "Quantification"
+    threads:
+        workflow.cores / parallel_processes
+    shell:
+        "rsem-calculate-expression --paired-end \
+            --star \
+            --paired-end \
+            --num-threads {threads} \
+            {input.fastq_1} \
+            {input.fastq_2} \
+            {input.rsem_idx} \
+            {params.rsem_prefix}"

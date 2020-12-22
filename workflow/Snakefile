@@ -167,7 +167,7 @@ rule Rsem_expression:
     input:
         fastq_1 = expand(rules.Compress.output.fastq_1, sample = samples),
         fastq_2 = expand(rules.Compress.output.fastq_2, sample = samples),
-        # rsem_idx = expand(rules.Rsem_idx.output.idx_dir, taxid = taxids)
+        # rsem_idx = directory(expand(rules.Rsem_idx.params.idx_dir, taxid = taxids))
     output:
         rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
         rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
@@ -186,7 +186,7 @@ rule Rsem_expression:
             --num-threads {threads} \
             {input.fastq_1} \
             {input.fastq_2} \
-            {params.rsem_idx} \
+            {input.rsem_idx} \
             {params.rsem_prefix}"
 
 # """

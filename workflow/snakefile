@@ -114,10 +114,10 @@ rule Rsem_idx:
         gtf_files = rules.Decompress.output.gtf_files,
         fa_files = rules.Decompress.output.fa_files      
     output:
-        idx_dir = directory(Results + "References/{taxid}/Indices/RSEM/"),
-        idx_tx = Results + "References/{taxid}/Indices/RSEM/rsem.transcripts.fa",
-        idx_fa = Results + "References/{taxid}/Indices/RSEM/rsem.idx.fa",
-        idx_n2g = Results + "References/{taxid}/Indices/RSEM/rsem.n2g.idx.fa"        
+        idx_dir = directory(Results + "References/{taxid}/Indices/rsem/"),
+        idx_tx = Results + "References/{taxid}/Indices/rsem/rsem.transcripts.fa",
+        idx_fa = Results + "References/{taxid}/Indices/rsem/rsem.idx.fa",
+        idx_n2g = Results + "References/{taxid}/Indices/rsem/rsem.n2g.idx.fa"        
     conda:
         "envs/rsem.yaml"
     group:
@@ -203,12 +203,12 @@ rule Rsem_expression:
     input:
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2,
-        rsem_idx = directory(rules.Rsem_idx.output.idx_dir)
     output:
+        rsem_prefix = directory(Results + "Counts/{taxid}/{sample}_rsem"),
         rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
         rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"
     params:
-        rsem_prefix = Results + "Counts/$species/{sample}_rsem"
+        rsem_idx = directory(rules.Rsem_idx.output.idx_dir)
     conda:
         "envs/rsem.yaml"
     group:
@@ -220,7 +220,9 @@ rule Rsem_expression:
             --star \
             --paired-end \
             --num-threads {threads} \
+            --star-output-genome-bam \
+            --star-gzipped-read-file \
             {input.fastq_1} \
             {input.fastq_2} \
-            {input.rsem_idx} \
-            {params.rsem_prefix}"
+            {params.rsem_idx}/rsem \
+            {output.rsem_prefix}"

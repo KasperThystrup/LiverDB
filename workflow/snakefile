@@ -232,16 +232,16 @@ rule Rsem_expression:
             {params.rsem_prefix}"
 
 
-"""
-Extract count values
-"""
-rule Extract_counts:
-    input:
-        rsem_genes = rules.Rsem_expression.output.rsem_genes
-        rsem_isoforms = rules.Rsem_expression.rsem_isoforms
-    output:
-        genes_count_file = "Counts/{taxid}/{sample}_genes.tsv"
-        transcripts_count_file = "Counts/{taxid}/{sample}_transcripts.tsv"
+# """
+# Extract count values
+# """
+# rule Extract_counts:
+#     input:
+#         rsem_genes = rules.Rsem_expression.output.rsem_genes,
+#         rsem_isoforms = rules.Rsem_expression.rsem_isoforms
+#     output:
+#         genes_count_file = "Counts/{taxid}/{sample}_genes.tsv"
+#         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts.tsv"
 
 
 # """

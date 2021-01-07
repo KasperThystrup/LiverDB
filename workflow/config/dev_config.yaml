@@ -1,6 +1,6 @@
 email: kathka@gmail.com # For Eutils -> if they ban your IP, they will warn yoou by email
-taxids: /disk3/Data/RNAseq/dev20.004_LiverDB/Results/taxids.txt
-samples: /disk3/Data/RNAseq/dev20.004_LiverDB/Results/samples.txt
+taxids: /disk3/Data/RNAseq/dev20.004_LiverDB/taxids.txt
+samples: /disk3/Data/RNAseq/dev20.004_LiverDB/samples.txt
 ensembl_release: 102
 compress: 1  # gz compression on fastq files, set to 0 to turn off (might speed up pipeline)
 ref_dir: /disk2/Resources/seqDB/ensembl/release-100/

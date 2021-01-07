@@ -1,6 +1,8 @@
-.snakemake*
+.snakemake/
 workflow/config/backup.yaml
 info
 Results
 *deprecated
-EveRun.nohup
+*.nohup
+dag.svg
+*manual.sh

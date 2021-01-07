@@ -4,8 +4,8 @@ logger::log_threshold(logger::INFO)
 
 detected_species <- snakemake@input[["detected_species"]]
 release <- snakemake@params[["release"]]
-gtf_files <- snakemake@output[["gtf_files"]]
-fa_files <- snakemake@output[["fa_files"]]
+gtf_file <- snakemake@output[["gtf_file"]]
+fa_file <- snakemake@output[["fa_file"]]
 
 
 locateEnsemblResources <- function(base, release, type, species) {
@@ -75,9 +75,9 @@ for (i in 1:nrow(species)) {
   logger::log_info("Downloading GTF and FASTA files for ", name)
   
   url_gtf <- locateEnsemblResources(base, release, type = "gtf", species = name)
-  downloadEnsemblResources(url_file = url_gtf, output = gtf_files)
+  downloadEnsemblResources(url_file = url_gtf, output = gtf_file)
 
   url_fa <- locateEnsemblResources(base, release, type = "fa", species = name)
-  downloadEnsemblResources(url_file = url_fa, output = fa_files)
+  downloadEnsemblResources(url_file = url_fa, output = fa_file)
 
 }

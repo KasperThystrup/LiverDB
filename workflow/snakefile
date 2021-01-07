@@ -1,5 +1,5 @@
 from snakemake import shell
-configfile: "workflow/config/config.yaml"
+configfile: "workflow/config/dev_config.yaml" # Remember to direct to correct config file
 
 # Set input file locations
 samples_files = config["samples"]
@@ -11,11 +11,12 @@ parallel_processes = config["parallel_processes"]
 email = config["email"]
 ensembl_release = config["ensembl_release"]
 compress = config["compress"]
+threshold = config["threshold"]
 
 
-with open ('taxids.txt', 'r') as tax_read:
+with open (taxids_file, 'r') as tax_read:
     taxids = tax_read.read().splitlines()
-with open ('samples.txt', 'r') as sample_read:
+with open (samples_files, 'r') as sample_read:
     samples = sample_read.read().splitlines()
 
 [x for x in taxids if x.strip()]
@@ -36,13 +37,16 @@ RunInfo data are requested and saved as .csv files
 """
 rule Metadata:
     params:
-        samples = "{sample}"
+        sample = "{sample}",
+        email = email
     output:
-        metadata_files = Results + "Metadata/{sample}.csv"
+        metadata_file = Results + "Metadata/{sample}.csv"
     conda:
         "envs/entrez_direct.yaml"
     group:
         "Metadata"
+    threads:
+        max(workflow.cores / 3, 3)
     shell:
         "esearch -db sra -query {params.sample} -email {params.email} | efetch -format runinfo > {output.metadata_file}"
 
@@ -54,7 +58,7 @@ As output, a tab-separated file containing taxids, along with the scientific nam
 """
 rule Checkspecies:
     input:
-        metadata_files = expand(rules.Metadata.output.metadata_files, sample = samples)
+        metadata_files = expand(rules.Metadata.output.metadata_file, sample = samples)
     params:
         taxids = taxids
     output:
@@ -72,8 +76,8 @@ rule References:
     params:
         release = ensembl_release,
     output:
-        gtf_files = Results + "References/{taxid}.gtf.gz",   # Remove Expansion
-        fa_files = Results + "References/{taxid}.fa.gz"   # Remove Expansion
+        gtf_file = Results + "References/{taxid}.gtf.gz",   # Remove Expansion
+        fa_file = Results + "References/{taxid}.fa.gz"   # Remove Expansion
     conda:
         "envs/references.yaml"
     group:
@@ -89,11 +93,11 @@ Reference files are decompressed using pigz, in order to enable index generation
 """
 rule Decompress:
     input:
-        gtf_files = rules.References.output.gtf_files,
-        fa_files = rules.References.output.fa_files
+        gtf_file = rules.References.output.gtf_file,
+        fa_file = rules.References.output.fa_file
     output:
-        gtf_files = temp(Results + "References/{taxid}.gtf"),
-        fa_files = temp(Results + "References/{taxid}.fa")
+        gtf_file = temp(Results + "References/{taxid}.gtf"),
+        fa_file = temp(Results + "References/{taxid}.fa")
     wildcard_constraints:
         taxid = "\d+"
     conda:
@@ -103,7 +107,7 @@ rule Decompress:
     threads:
         workflow.cores / parallel_processes
     shell:
-        "unpigz --force --processes {workflow.cores} {input.gtf_files} {input.fa_files}"
+        "unpigz --force --processes {workflow.cores} {input.gtf_file} {input.fa_file}"
 
 
 """
@@ -111,8 +115,8 @@ Genome and transcript indices are generated for enabling downstream gene and tra
 """
 rule Rsem_idx:
     input:
-        gtf_files = rules.Decompress.output.gtf_files,
-        fa_files = rules.Decompress.output.fa_files      
+        gtf_file = rules.Decompress.output.gtf_file,
+        fa_file = rules.Decompress.output.fa_file      
     output:
         idx_dir = directory(Results + "References/{taxid}/Indices/rsem/"),
         idx_tx = Results + "References/{taxid}/Indices/rsem/rsem.transcripts.fa",
@@ -126,10 +130,10 @@ rule Rsem_idx:
         workflow.cores
     shell:
         "rsem-prepare-reference \
-            --gtf {input.gtf_files} \
+            --gtf {input.gtf_file} \
             --star \
             --num-threads {threads} \
-            {input.fa_files} \
+            {input.fa_file} \
             {output.idx_dir}/rsem"
 
 
@@ -138,9 +142,9 @@ Sample metadata are used to optain SRR numbers for each sample. SRA-tools prefet
 """
 rule Srafetch:
     input:
-        metadata_files = rules.Metadata.output.metadata_files
+        metadata_file = rules.Metadata.output.metadata_file
     output:
-        sra_files = temp(Results + "Rawdata/SRA/{sample}.sra")
+        sra_file = temp(Results + "Rawdata/SRA/{sample}.sra")
     params:
         cmd = "prefetch"
     conda:
@@ -156,8 +160,8 @@ SRA-tools Fasterq-dump are used to extract Read information into paired-end mate
 """
 rule Fasterqdump:
     input:
-        metadata_files = rules.Metadata.output.metadata_files,
-        sra_files = rules.Srafetch.output.sra_files
+        metadata_file = rules.Metadata.output.metadata_file,
+        sra_file = rules.Srafetch.output.sra_file
     output:
             fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
             fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
@@ -201,14 +205,14 @@ Gene and transcript quantifications are calculated using RSEM.
 """
 rule Rsem_expression:
     input:
+        rsem_idx = directory(rules.Rsem_idx.output.idx_dir),
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2,
-    output:
-        rsem_prefix = directory(Results + "Counts/{taxid}/{sample}_rsem"),
-        rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
-        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"
     params:
-        rsem_idx = directory(rules.Rsem_idx.output.idx_dir)
+        rsem_prefix = Results + "Counts/{taxid}/{sample}_rsem"
+    output:
+        rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
+        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"        
     conda:
         "envs/rsem.yaml"
     group:
@@ -224,5 +228,40 @@ rule Rsem_expression:
             --star-gzipped-read-file \
             {input.fastq_1} \
             {input.fastq_2} \
-            {params.rsem_idx}/rsem \
-            {output.rsem_prefix}"
+            {input.rsem_idx}/rsem \
+            {params.rsem_prefix}"
+
+
+"""
+Extract count values
+"""
+rule Extract_counts:
+    input:
+        rsem_genes = rules.Rsem_expression.output.rsem_genes
+        rsem_isoforms = rules.Rsem_expression.rsem_isoforms
+    output:
+        genes_count_file = "Counts/{taxid}/{sample}_genes.tsv"
+        transcripts_count_file = "Counts/{taxid}/{sample}_transcripts.tsv"
+
+
+# """
+# Samples with high zero inflation could skewer the normalization.
+# Zero contents in the samples are screened for zero contents,
+# and samples with a higher zero contents than a set threshold are dismissed.
+# """
+# rule zero_intolerance:
+#     input:
+#         genes_count_file =  rules.Extract_counts.output.genes_count_file
+#         transcripts_count_file = rules.Extract_counts.output.transcripts_count_file
+#     output:
+#         genes_count_file = "Counts/{taxid}/{sample}_genes_filtered.tsv"
+#         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts_filtered.tsv"
+#     params:
+#         threshold = threshold,
+#         threads = sub_threads
+#     conda:
+#         "envs/R.yaml"
+#     threads:
+#         max_threads
+#     script:
+#         "scripts/zero_intolerance.R"

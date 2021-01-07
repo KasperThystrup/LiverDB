@@ -205,14 +205,14 @@ Gene and transcript quantifications are calculated using RSEM.
 """
 rule Rsem_expression:
     input:
-        rsem_idx = directory(rules.Rsem_idx.output.idx_dir),
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2,
-    params:
-        rsem_prefix = Results + "Counts/{taxid}/{sample}_rsem"
     output:
+        rsem_prefix = directory(Results + "Counts/{taxid}/{sample}_rsem"),
         rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
-        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"        
+        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"
+    params:
+        rsem_idx = directory(rules.Rsem_idx.output.idx_dir)
     conda:
         "envs/rsem.yaml"
     group:
@@ -228,20 +228,20 @@ rule Rsem_expression:
             --star-gzipped-read-file \
             {input.fastq_1} \
             {input.fastq_2} \
-            {input.rsem_idx}/rsem \
-            {params.rsem_prefix}"
+            {params.rsem_idx}/rsem \
+            {output.rsem_prefix}"
 
 
-"""
-Extract count values
-"""
-rule Extract_counts:
-    input:
-        rsem_genes = rules.Rsem_expression.output.rsem_genes
-        rsem_isoforms = rules.Rsem_expression.rsem_isoforms
-    output:
-        genes_count_file = "Counts/{taxid}/{sample}_genes.tsv"
-        transcripts_count_file = "Counts/{taxid}/{sample}_transcripts.tsv"
+# """
+# Extract count values
+# """
+# rule Extract_counts:
+#     input:
+#         rsem_genes = rules.Rsem_expression.output.rsem_genes
+#         rsem_isoforms = rules.Rsem_expression.rsem_isoforms
+#     output:
+#         genes_count_file = "Counts/{taxid}/{sample}_genes.tsv"
+#         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts.tsv"
 
 
 # """

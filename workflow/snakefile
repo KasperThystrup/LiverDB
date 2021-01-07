@@ -24,11 +24,10 @@ with open (samples_files, 'r') as sample_read:
 
 ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdump > Compress
 
-
 rule all:
     input:
-        rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
-        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
+        genes_filtered_counts = expand(Results + "Counts/{taxid}/genes_filtered.tsv", taxid = taxids),
+        transcripts_filtered_counts = expand(Results + "Counts/{taxid}/transcripts_filtered.tsv", taxid = taxids)
 
 
 """
@@ -208,9 +207,9 @@ rule Rsem_expression:
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2,
     output:
-        rsem_prefix = directory(Results + "Counts/{taxid}/{sample}_rsem"),
-        rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
-        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"
+        rsem_prefix = directory(Results + "Counts/{taxid}/RSEM/{sample}_rsem"),
+        rsem_genes = Results + "Counts/{taxid}/RSEM/{sample}_rsem.genes.results",
+        rsem_isoforms = Results + "Counts/{taxid}/RSEM/{sample}_rsem.isoforms.results"
     params:
         rsem_idx = directory(rules.Rsem_idx.output.idx_dir)
     conda:
@@ -232,36 +231,37 @@ rule Rsem_expression:
             {output.rsem_prefix}"
 
 
-# """
-# Extract count values
-# """
-# rule Extract_counts:
-#     input:
-#         rsem_genes = rules.Rsem_expression.output.rsem_genes,
-#         rsem_isoforms = rules.Rsem_expression.rsem_isoforms
-#     output:
-#         genes_count_file = "Counts/{taxid}/{sample}_genes.tsv"
-#         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts.tsv"
+"""
+Extract count values
+"""
+rule Extract_counts:
+    input:
+        rsem_genes = rules.Rsem_expression.output.rsem_genes,
+        rsem_isoforms = rules.Rsem_expression.output.rsem_isoforms
+    output:
+        genes_count_file = Results + "Counts/{taxid}/{sample}_genes.tsv",
+        transcripts_count_file = Results + "Counts/{taxid}/{sample}_transcripts.tsv"
+    threads:
+        1
+    shell:
+        "cut -f1,5 {input.rsem_genes} > {output.genes_count_file} && cut -f1,5 {input.rsem_isoforms} > {output.transcripts_count_file}"
 
 
-# """
-# Samples with high zero inflation could skewer the normalization.
-# Zero contents in the samples are screened for zero contents,
-# and samples with a higher zero contents than a set threshold are dismissed.
-# """
-# rule zero_intolerance:
-#     input:
-#         genes_count_file =  rules.Extract_counts.output.genes_count_file
-#         transcripts_count_file = rules.Extract_counts.output.transcripts_count_file
-#     output:
-#         genes_count_file = "Counts/{taxid}/{sample}_genes_filtered.tsv"
-#         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts_filtered.tsv"
-#     params:
-#         threshold = threshold,
-#         threads = sub_threads
-#     conda:
-#         "envs/R.yaml"
-#     threads:
-#         max_threads
-#     script:
-#         "scripts/zero_intolerance.R"
+"""
+Merge count matrices and dismiss samples with zero contents which exceeds the threshold percentage.
+"""
+rule zero_intolerance:
+    input:
+        genes_count_files = expand(rules.Extract_counts.output.genes_count_file, taxid = taxids, sample = samples),
+        transcripts_count_files = expand(rules.Extract_counts.output.transcripts_count_file, taxid = taxids, sample = samples)
+    params:
+        threshold = threshold
+    output:
+        genes_filtered_counts = Results + "Counts/{taxid}/genes_filtered.tsv",
+        transcripts_filtered_counts = Results + "Counts/{taxid}/transcripts_filtered.tsv"
+    conda:
+        "envs/R.yaml"
+    threads:
+        1
+    script:
+        "scripts/zero_intolerance.R"

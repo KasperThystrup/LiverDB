@@ -1,26 +1,22 @@
 `%>%` <- dplyr::`%>%`  ## Circumventing library() calls for the pipe operator
+options(readr.num_columns = 0)
+logger::log_threshold(logger::INFO)
 
-species_file = snakemake@input[["species_file"]]
-release = snakemake@params[["release"]]
-gtf_files = snakemake@output[["gtf_files"]]
-fa_files = snakemake@output[["fa_files"]]
+detected_species <- snakemake@input[["detected_species"]]
+release <- snakemake@params[["release"]]
+gtf_files <- snakemake@output[["gtf_files"]]
+fa_files <- snakemake@output[["fa_files"]]
 
-### Development options
-# species_file = "~/tmp/gsm/Results/Species.txt"
-# release = 102
-# gtf_files = "~/tmp/gtf_files.txt"
-# fa_files = "~/tmp/fa_files.txt"
-###
 
 locateEnsemblResources <- function(base, release, type, species) {
-  
+
   # Set up FTP location
   base_url = file.path(base, paste0("release-", release))
   
   if (type == "gtf") {
     url <- file.path(base_url, type, tolower(species))
     pattern <- paste0(species, "\\..+\\.", release, "\\.gtf\\.gz")
-  } else if (type == "fasta") {
+  } else if (type == "fa") {
     url <- file.path(base_url, "fasta", tolower(species), "dna")
     pattern <- paste0(species, "\\..+\\.dna\\.primary_assembly(\\.\\w+)?\\.fa\\.gz")
   } else {
@@ -28,12 +24,12 @@ locateEnsemblResources <- function(base, release, type, species) {
          "  Use either type = `gtf` or `fasta`!")
   }
   
-  logger::log_debug("Fetching links for GTF files for ", species)
+  logger::log_debug("Fetching links for ", species)
   ftp <- RCurl::getURL(url = paste0(url, "/"), dirlistonly = TRUE)
   files <- strsplit(x = ftp, split = "\n")[[1]]
   
   logger::log_debug(
-    "Identififying target", toupper(type), "file from:\n",
+    "Identififying target ", toupper(type), " file from:\n",
     paste(files, collapse = "\n")
   )
   
@@ -42,51 +38,46 @@ locateEnsemblResources <- function(base, release, type, species) {
   # Ensure that at least one gtf file is located
   if (length(target) < 1) {
     stop(
-      "No ", toupper(type), " files were found.\n",
-      "  Ensure that the base link is correct:\n", base
+      "No ", toupper(type), " files were found at:\n", url,
+      "  Ensure that the base link and the url is correct:\n", base
     )
   }
   
   file.path(url, target)
 }
 
-downloadEnsemblResources <- function(url_file, taxid, output) {
+downloadEnsemblResources <- function(url_file, output) {
 
-  # Define destination for target files
-  destdir <- file.path(dirname(output), taxid)
-  fs::dir_create(destdir)
-  destfile <- file.path(destdir, basename(url_file))
-  download.file(url = url_file, destfile, method = "wget", quiet = TRUE)
+  # Define destination for target files  
+  logger::log_debug(paste("Downloading from url:", url_file, "\nSaving file as:", output))
+  download.file(url = url_file, output, method = "wget", quiet = TRUE)
   
-  # Write downloaded files
-  readr::write_lines(x = destfile, file = output)
 }
 
+# ## Development options
+# metadata_files = c("Results/Metadata/GSM3960735.csv", "Results/Metadata/GSM3960736.csv",
+#                    "Results/Metadata/GSM3960737.csv", "Results/Metadata/GSM4735163.csv")
+# release = 102
+# taxids = c(10090, 9606)
+# output_dir = "Results/References"
+# setwd("~/tmp/test")
+# ##
 
-logger::log_info("Reading: ", species_file)
-species_data <- readr::read_tsv(species_file)
-
-logger::log_debug("Species_data implemented:", species_data, sep = "\n")
-
-species_names <- dplyr::pull(species_data, ScientificName)
-taxids <- dplyr::pull(species_data, TaxID)
+species <- readr::read_tsv(detected_species)
 
 base <- "ftp://ftp.ensembl.org/pub"
 
-for (i in seq_along(species_names)) {
-  species <- species_names[i]
-  tax <- taxids[i]
-  logger::log_debug("Locating GTF file URL")
-  url_gtf <- locateEnsemblResources(base, release, type = "gtf", species = species)
+for (i in 1:nrow(species)) {
+  tax <- dplyr::pull(species[i, ], TaxID)
+  name <- dplyr::pull(species[i, ], ScientificName)
+
+  logger::log_debug("Detected following species:", tax, " - ", name)
+  logger::log_info("Downloading GTF and FASTA files for ", name)
   
-  logger::log_info("Downloading GTF files for ", species,
-                   " writing file paths to:\n  ", gtf_files)
-  downloadEnsemblResources(url_gtf, taxid = tax, output = gtf_files)
-  
-  logger::log_debug("Locating FASTA file URL")
-  url_fasta <- locateEnsemblResources(base, release, type = "fasta", species = species)
-  
-  logger::log_info("Downloading FASTA files for ", species,
-                   " writing file paths to:\n  ", fa_files)
-  downloadEnsemblResources(url_fasta, taxid = tax, output = fa_files)
+  url_gtf <- locateEnsemblResources(base, release, type = "gtf", species = name)
+  downloadEnsemblResources(url_file = url_gtf, output = gtf_files)
+
+  url_fa <- locateEnsemblResources(base, release, type = "fa", species = name)
+  downloadEnsemblResources(url_file = url_fa, output = fa_files)
+
 }

@@ -3,7 +3,7 @@ channels:
  - bioconda
  - conda-forge
 dependencies:
- - pandas = 1.1.4
+ - pandas = 1.1
  - samtools = 1.11
  - zlib
  - htslib

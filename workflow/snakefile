@@ -205,7 +205,6 @@ Gene and transcript quantifications are calculated using RSEM.
 """
 rule Rsem_expression:
     input:
-        rsem_idx = directory(rules.Rsem_idx.output.idx_dir),
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2,
     params:
@@ -251,10 +250,10 @@ rule Rsem_expression:
 # """
 # rule zero_intolerance:
 #     input:
-#         genes_count_file =  rules.Extract_counts.output.genes_count_file
+#         genes_count_file =  rules.Extract_counts.output.genes_count_file,
 #         transcripts_count_file = rules.Extract_counts.output.transcripts_count_file
 #     output:
-#         genes_count_file = "Counts/{taxid}/{sample}_genes_filtered.tsv"
+#         genes_count_file = "Counts/{taxid}/{sample}_genes_filtered.tsv",
 #         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts_filtered.tsv"
 #     params:
 #         threshold = threshold,

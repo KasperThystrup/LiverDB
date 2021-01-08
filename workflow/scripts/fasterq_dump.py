@@ -1,5 +1,5 @@
 from pandas import read_csv
-from os.path import dirname
+from os.path import dirname basename
 from snakemake import shell
 
 metadata_file = snakemake.input[0]
@@ -18,9 +18,10 @@ fasterq_dump_str = " --force --split-files --temp %s --threads %s --outdir %s %s
 
 temp_dir = dirname(fastq_1)
 if layout == "SINGLE":
-	dummy_com = " ; touch %s"
+	fastq = basename(fastq_1).replace("_1","", 1)
+	dummy_com = " ; touch %s ; mv %s %s"
 	fasterq_dump_str += dummy_com
-	fasterq_dump = cmd + fasterq_dump_str %(temp_dir, threads, temp_dir, sra_file, fastq_2)
+	fasterq_dump = cmd + fasterq_dump_str %(temp_dir, threads, temp_dir, sra_file, fastq_2, fastq, fastq_1)
 elif layout != "PAIRED":
 	exit("fasterq_dump: Layout type could not be interpreted; %s" %layout)
 else:

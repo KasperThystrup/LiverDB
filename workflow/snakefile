@@ -210,9 +210,12 @@ Gene and transcript quantifications are calculated using RSEM.
 """
 rule Rsem_expression:
     input:
+        metadata_file = rules.Metadata.output.metadata_file,
         fastq_1 = rules.Compress.output.fastq_1,
-        fastq_2 = rules.Compress.output.fastq_2,
+        fastq_2 = rules.Compress.output.fastq_2
     params:
+        cmd = "rsem-calculate-expression"
+        rsem_idx = rules.Rsem_idx.output.rsem_idx,
         rsem_prefix = Results + "Counts/{taxid}/{sample}_rsem"
     output:
         rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
@@ -223,17 +226,8 @@ rule Rsem_expression:
         "Quantification"
     threads:
         workflow.cores / parallel_processes
-    shell:
-        "rsem-calculate-expression --paired-end \
-            --star \
-            --paired-end \
-            --num-threads {threads} \
-            --star-output-genome-bam \
-            --star-gzipped-read-file \
-            {input.fastq_1} \
-            {input.fastq_2} \
-            {input.rsem_idx}/rsem \
-            {params.rsem_prefix}"
+    script:
+        "scripts/rsem.py"
 
 
 # """

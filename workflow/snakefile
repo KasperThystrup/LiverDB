@@ -45,7 +45,7 @@ rule Metadata:
     group:
         "Metadata"
     threads:
-        max(workflow.cores / 3, 3)
+        workflow.cores # Simultanous jobs causes issues
     shell:
         "esearch -db sra -query {params.sample} -email {params.email} | efetch -format runinfo > {output.metadata_file}"
 
@@ -62,6 +62,10 @@ rule Checkspecies:
         taxids = taxids
     output:
         detected_species = Results + "Metadata/detectedSpecies.txt"
+    group:
+        "Genome"
+    threads:
+        1
     script:
         "scripts/checkspecies.R"
 
@@ -171,7 +175,7 @@ rule Fasterqdump:
     group:
         "Samples"
     threads:
-        workflow.cores / parallel_processes
+        workflow.cores  # Simultanous jobs may cause issues
     script:
         "scripts/fasterq_dump.py"
 
@@ -239,7 +243,7 @@ rule Extract_counts:
         rsem_genes = rules.Rsem_expression.output.rsem_genes,
         rsem_isoforms = rules.Rsem_expression.output.rsem_isoforms
     output:
-        genes_count_file = Results + "Counts/{taxid}/{sample}_genes.tsv",
+        genes_count_file = Results + "Counts/{taxid}/Samples/{sample}_genes.tsv",
         transcripts_count_file = Results + "Counts/{taxid}/{sample}_transcripts.tsv"
     threads:
         1

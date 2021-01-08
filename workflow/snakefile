@@ -28,7 +28,8 @@ ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdum
 rule all:
     input:
         rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
-        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples)
+        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples),
+        sra_file = expand(Results + "Rawdata/SRA/{sample}.sra", sample = samples)
 
 
 """
@@ -46,7 +47,7 @@ rule Metadata:
     group:
         "Metadata"
     threads:
-        max(workflow.cores / 3, 3)
+        workflow.cores
     shell:
         "esearch -db sra -query {params.sample} -email {params.email} | efetch -format runinfo > {output.metadata_file}"
 
@@ -63,6 +64,8 @@ rule Checkspecies:
         taxids = taxids
     output:
         detected_species = Results + "Metadata/detectedSpecies.txt"
+    group:
+        "Genome"
     script:
         "scripts/checkspecies.R"
 
@@ -151,6 +154,8 @@ rule Srafetch:
         "envs/sra_tools.yaml"
     group:
         "Samples"
+    threads:
+        workflow.cores
     script:
         "scripts/prefetch.py"
 
@@ -172,7 +177,7 @@ rule Fasterqdump:
     group:
         "Samples"
     threads:
-        workflow.cores / parallel_processes
+        workflow.cores
     script:
         "scripts/fasterq_dump.py"
 
@@ -205,7 +210,6 @@ Gene and transcript quantifications are calculated using RSEM.
 """
 rule Rsem_expression:
     input:
-        rsem_idx = directory(rules.Rsem_idx.output.idx_dir),
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2,
     params:

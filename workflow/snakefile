@@ -244,7 +244,7 @@ rule Extract_counts:
         rsem_isoforms = rules.Rsem_expression.output.rsem_isoforms
     output:
         genes_count_file = Results + "Counts/{taxid}/Samples/{sample}_genes.tsv",
-        transcripts_count_file = Results + "Counts/{taxid}/{sample}_transcripts.tsv"
+        transcripts_count_file = Results + "Counts/{taxid}/Samples/{sample}_transcripts.tsv"
     threads:
         1
     shell:
@@ -253,6 +253,7 @@ rule Extract_counts:
 
 """
 Merge count matrices and dismiss samples with zero contents which exceeds the threshold percentage.
+Samples which has an zero count average which exceeds the threshold set in config, will be sorted out.
 """
 rule zero_intolerance:
     input:

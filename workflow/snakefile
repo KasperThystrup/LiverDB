@@ -214,8 +214,8 @@ rule Rsem_expression:
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2
     params:
-        cmd = "rsem-calculate-expression"
-        rsem_idx = rules.Rsem_idx.output.rsem_idx,
+        cmd = "rsem-calculate-expression",
+        idx_dir = rules.Rsem_idx.output.idx_dir,
         rsem_prefix = Results + "Counts/{taxid}/{sample}_rsem"
     output:
         rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",

@@ -4,7 +4,7 @@ metadata_file = snakemake.input[0]
 fastq_1 = snakemake.input[1]
 fastq_2 = snakemake.input[2]
 cmd = snakemake.params[0]
-rsem_idx = snakemake.params[1]
+idx_dir = snakemake.params[1]
 rsem_prefix = snakemake.params[2]
 rsem_genes = snakemake.output[0]
 rsem_isoforms = snakemake.output[1]
@@ -33,7 +33,7 @@ else:
 	layout_option = "--paired-end"
 	inputs = "%s %s" %(fastq_1, fastq_2)
 
-rsem = cdm + rsem_str %(layout_option, threads, inputs, rsem_idx, rsem_prefix)
+rsem = cdm + rsem_str %(layout_option, threads, inputs, idx_dir, rsem_prefix)
 
 print("DEBUG:" + rsem)
 shell(rsem)

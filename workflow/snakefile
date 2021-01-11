@@ -168,6 +168,7 @@ rule Fasterqdump:
         metadata_file = rules.Metadata.output.metadata_file,
         sra_file = rules.Srafetch.output.sra_file
     output:
+            fastq_tech = temp(Results + "Rawdata/Fastq/{sample}.fastq"),
             fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
             fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
     params:

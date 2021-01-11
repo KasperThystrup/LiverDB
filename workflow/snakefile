@@ -255,7 +255,7 @@ rule Extract_counts:
 Merge count matrices and dismiss samples with zero contents which exceeds the threshold percentage.
 Samples which has an zero count average which exceeds the threshold set in config, will be sorted out.
 """
-rule zero_intolerance:
+rule Zero_intolerance:
     input:
         genes_count_files = expand(rules.Extract_counts.output.genes_count_file, taxid = taxids, sample = samples),
         transcripts_count_files = expand(rules.Extract_counts.output.transcripts_count_file, taxid = taxids, sample = samples)
@@ -270,3 +270,20 @@ rule zero_intolerance:
         1
     script:
         "scripts/zero_intolerance.R"
+
+"""
+Samples are normalized using the methodology from DEseq2. 
+"""
+rule Normalize:
+    input:
+        genes_filtered_counts = ,
+        transcripts_filtered_counts = 
+    output:
+        genes_normalized_count = ,
+        transcripts_normalized_counts = 
+    conda:
+        "envs/R.yaml"
+    threads:
+        1
+    script:
+        "scripts/normalize.R"

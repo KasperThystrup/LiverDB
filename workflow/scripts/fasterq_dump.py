@@ -14,7 +14,7 @@ meta = read_csv(metadata_file)
 
 layout = meta["LibraryLayout"][0]
 
-fasterq_dump_str = " --force --split-files --include-technical --temp %s --threads %s --outdir %s %s"
+fasterq_dump_str = " --force --split-3 --temp %s --threads %s --outdir %s %s"
 ## NOTE that in rare cases include-technical is needed to ensure paired end are properly splitted
 
 temp_dir = dirname(fastq_1)

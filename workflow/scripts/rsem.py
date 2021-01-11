@@ -34,7 +34,7 @@ else:
 	layout_option = "--paired-end"
 	inputs = "%s %s" %(fastq_1, fastq_2)
 
-rsem = cdm + rsem_str %(layout_option, threads, inputs, idx_dir, rsem_prefix)
+rsem = cmd + rsem_str %(layout_option, threads, inputs, idx_dir, rsem_prefix)
 
 print("DEBUG:" + rsem)
 shell(rsem)

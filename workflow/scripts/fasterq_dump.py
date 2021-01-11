@@ -1,5 +1,5 @@
 from pandas import read_csv
-from os.path import dirname
+from os.path import basename, dirname, exists
 from snakemake import shell
 
 metadata_file = snakemake.input[0]
@@ -28,3 +28,9 @@ else:
 
 print("DEBUG:" + fasterq_dump)
 shell(fasterq_dump)
+
+if layout == "PAIRED" and not exists(fastq_1):
+	sample_id = basename(sra_file).replace("\.sra", "")
+	print("Paired end dataset:", id, "")
+
+	shell("touch %s && touch %s && echo %s >> unpaired_samples.txt" %(fastq_1, fastq_2, sample_id))

@@ -190,8 +190,8 @@ rule Compress:
         fastq_1 = rules.Fasterqdump.output.fastq_1,
         fastq_2 = rules.Fasterqdump.output.fastq_2
     output:
-        fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq.gz",  ##should be temp
-        fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq.gz"  ##should be temp
+        fastq_1 = temp(Results + "Rawdata/Fastq/{sample}_1.fastq.gz"),  ##should be temp
+        fastq_2 = temp(Results + "Rawdata/Fastq/{sample}_2.fastq.gz")  ##should be temp
     threads:
         workflow.cores / parallel_processes
     conda:

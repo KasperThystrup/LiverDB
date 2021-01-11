@@ -1,3 +1,4 @@
+from pandas import read_csv
 from snakemake import shell
 
 metadata_file = snakemake.input[0]

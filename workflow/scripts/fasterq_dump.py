@@ -9,7 +9,8 @@ fastq_1 = snakemake.output[0]
 fastq_2 = snakemake.output[1]
 threads = snakemake.threads
 
-#print("DEGBUG:", metadata_file, sra_file, cmd, fastq_1, fastq_2, threads)
+
+threads = min(10, threads)  ## More cores dirsupts the run 
 meta = read_csv(metadata_file)
 
 layout = meta["LibraryLayout"][0]

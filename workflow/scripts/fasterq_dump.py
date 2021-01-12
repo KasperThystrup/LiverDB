@@ -1,5 +1,5 @@
 from pandas import read_csv
-from os.path import dirname
+from os.path import basename, dirname, exists
 from snakemake import shell
 
 metadata_file = snakemake.input[0]
@@ -9,7 +9,8 @@ fastq_1 = snakemake.output[0]
 fastq_2 = snakemake.output[1]
 threads = snakemake.threads
 
-#print("DEGBUG:", metadata_file, sra_file, cmd, fastq_1, fastq_2, threads)
+
+threads = min(10, threads)  ## More cores dirsupts the run 
 meta = read_csv(metadata_file)
 
 layout = meta["LibraryLayout"][0]
@@ -28,3 +29,9 @@ else:
 
 print("DEBUG:" + fasterq_dump)
 shell(fasterq_dump)
+
+if layout == "PAIRED" and not exists(fastq_1):
+	sample_id = basename(sra_file).replace("\.sra", "")
+	print("Paired end dataset:", id, "")
+
+	shell("touch %s && touch %s && echo %s >> unpaired_samples.txt" %(fastq_1, fastq_2, sample_id))

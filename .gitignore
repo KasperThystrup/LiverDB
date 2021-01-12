@@ -1,5 +1,6 @@
 .snakemake/
 workflow/config/backup.yaml
+unpaired_samples.txt
 info
 Results
 *deprecated

@@ -26,8 +26,8 @@ ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdum
 
 rule all:
     input:
-        genes_filtered_counts = expand(Results + "Counts/{taxid}/genes_filtered.tsv", taxid = taxids),
-        transcripts_filtered_counts = expand(Results + "Counts/{taxid}/transcripts_filtered.tsv", taxid = taxids)
+        genes_normalized_file = expand(Results + "Counts/{taxid}/genes_normalized.tsv", taxid = taxids),
+        transcripts_normalized_file = expand(Results + "Counts/{taxid}/transcripts_normalized.tsv", taxid = taxids)
 
 
 """

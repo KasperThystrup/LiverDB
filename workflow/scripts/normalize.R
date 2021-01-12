@@ -4,23 +4,46 @@ genes_normalized_file <- snakemake@output[["genes_normalized_file"]]
 transcripts_normalized_files <- snakemake@output[["transcripts_normalized_files"]]
 threads <- snakemake@threads
 
+# genes_filtered_files <- "/disk3/Data/RNAseq/dev20.004_LiverDB/Results/Counts/9606/genes_filtered.tsv"
+# transcript_filtered_files <- "/disk3/Data/RNAseq/dev20.004_LiverDB/Results/Counts/9606/transcripts_filtered.tsv"
+# genes_normalized_file <- "/disk3/Data/RNAseq/dev20.004_LiverDB/Results/Counts/9606/genes_normalized.tsv"
+# transcripts_normalized_files <- "/disk3/Data/RNAseq/dev20.004_LiverDB/Results/Counts/9606/transcripts_normalized.tsv"
 logger::log_debug("Importing filederd gene counts")
 genes_filtered <- readr::read_tsv(file = genes_filtered_files)
+genes <- tibble::column_to_rownames(genes_filtered, var = "EnsemblID")
+
+samples <- colnames(genes)
+metadata <- data.frame(condition = rep(x = 1, length(samples)), row.names = samples)
+
+dds <- DESeq2::DESeqDataSetFromMatrix(
+  countData = genes,
+  colData = metadata,
+  design = ~ condition
+)
+
+dds <- DESeq2::estimateSizeFactors(dds)
+counts_raw <- DESeq2::counts(object = dds, normalized = TRUE)
+
+counts <- tibble::rownames_to_column(as.data.frame(counts), var = "EnsemblID")
+
+readr::write_tsv(x = counts, file = genes_normalized_file)
+
+###########
 transcripts_filtered <- readr::read_tsv(file = transcripts_filtered_files)
-## Copy pasta code!!!
-logger::log_debug("Removing samples with a zero content higher than the threshold")
-idx <- colMeans(gene_counts_raw == 0) <= threshold
-gene_counts <- gene_counts_raw[idx]
+transcripts <- tibble::column_to_rownames(transcripts_filtered, var = "EnsemblID")
 
-dismissed <- colnames(gene_counts_raw[!idx])
-if (length(dismissed) > 0) {
-  dismissed_file <- file.path(dirname(genes_count_files), "dismissed_sample_genes.txt")
-  logger::log_info(paste("Dismissed samples written to:", dismissed_file))
-  readr::write_lines(x = dismissed, file = dismissed_file)
-} else {
-  logger::log_info(paste0("No samples had a zero-inflation above: ", threshold*100, "%"))
-}
+samples <- colnames(transcripts)
+metadata <- data.frame(condition = rep(x = 1, length(samples)), row.names = samples)
 
-logger::log_debug("Writing filtered gene count matrix")
-#readr::write_tsv(x = tibble::rownames_to_column(gene_counts, "EnsemblID"),
-                 file = genes_filtered_files)
+dds <- DESeq2::DESeqDataSetFromMatrix(
+  countData = transcripts,
+  colData = metadata,
+  design = ~ condition
+)
+
+dds <- DESeq2::estimateSizeFactors(dds)
+counts_raw <- DESeq2::counts(object = dds, normalized = TRUE)
+
+counts <- tibble::rownames_to_column(as.data.frame(counts), var = "EnsemblID")
+
+readr::write_tsv(x = counts, file = transcripts_normalized_file)

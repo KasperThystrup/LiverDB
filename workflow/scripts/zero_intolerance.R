@@ -10,8 +10,8 @@ logger::log_threshold(level = logger::DEBUG)
 genes_count_files <- snakemake@input[["genes_count_files"]]
 transcripts_count_files <- snakemake@input[["transcripts_count_files"]]
 threshold <- snakemake@params[["threshold"]]
-genes_filtered_counts <- snakemake@output[["genes_filtered_counts"]]
-transcripts_filtered_counts <- snakemake@output[["transcripts_filtered_counts"]]
+genes_filtered_files <- snakemake@output[["genes_filtered_files"]]
+transcripts_filtered_files <- snakemake@output[["transcripts_filtered_files"]]
 threads <- snakemake@threads
 
 logger::log_debug("Importing sample gene count files")
@@ -43,7 +43,7 @@ if (length(dismissed) > 0) {
 
 logger::log_debug("Writing filtered gene count matrix")
 readr::write_tsv(x = tibble::rownames_to_column(gene_counts, "EnsemblID"),
-                 file = genes_filtered_counts)
+                 file = genes_filtered_files)
 
 
 logger::log_debug("Importing sample transcript count files")
@@ -74,4 +74,4 @@ if (length(dismissed) > 0) {
 
 logger::log_debug("Writing filtered transcript count matrix")
 readr::write_tsv(x = tibble::rownames_to_column(transcript_counts, "EnsemblID"),
-                 file = transcripts_filtered_counts)
+                 file = transcripts_filtered_files)

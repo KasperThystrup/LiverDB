@@ -1,12 +1,12 @@
-genes_filtered_counts <- snakemake@input[["genes_filtered_counts"]]
-transcripts_filtered_counts <- snakemake@input[["transcripts_filtered_counts"]]
-genes_normalized_count <- snakemake@output[["genes_normalized_count"]]
-transcripts_normalized_counts <- snakemake@output[["transcripts_normalized_counts"]]
+genes_filtered_files <- snakemake@input[["genes_filtered_files"]]
+transcripts_filtered_files <- snakemake@input[["transcripts_filtered_files"]]
+genes_normalized_file <- snakemake@output[["genes_normalized_file"]]
+transcripts_normalized_files <- snakemake@output[["transcripts_normalized_files"]]
 threads <- snakemake@threads
 
 logger::log_debug("Importing filederd gene counts")
-genes_filtered <- readr::read_tsv(file = genes_filtered_counts)
-
+genes_filtered <- readr::read_tsv(file = genes_filtered_files)
+transcripts_filtered <- readr::read_tsv(file = transcripts_filtered_files)
 ## Copy pasta code!!!
 logger::log_debug("Removing samples with a zero content higher than the threshold")
 idx <- colMeans(gene_counts_raw == 0) <= threshold
@@ -23,4 +23,4 @@ if (length(dismissed) > 0) {
 
 logger::log_debug("Writing filtered gene count matrix")
 #readr::write_tsv(x = tibble::rownames_to_column(gene_counts, "EnsemblID"),
-                 file = genes_filtered_counts)
+                 file = genes_filtered_files)

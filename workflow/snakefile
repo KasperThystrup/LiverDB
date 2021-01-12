@@ -262,8 +262,8 @@ rule Zero_intolerance:
     params:
         threshold = threshold
     output:
-        genes_filtered_counts = Results + "Counts/{taxid}/genes_filtered.tsv",
-        transcripts_filtered_counts = Results + "Counts/{taxid}/transcripts_filtered.tsv"
+        genes_filtered_file = Results + "Counts/{taxid}/genes_filtered.tsv",
+        transcripts_filtered_file = Results + "Counts/{taxid}/transcripts_filtered.tsv"
     conda:
         "envs/R.yaml"
     threads:
@@ -276,11 +276,11 @@ Samples are normalized using the methodology from DEseq2.
 """
 rule Normalize:
     input:
-        genes_filtered_counts = ,
-        transcripts_filtered_counts = 
+        genes_filtered_file = rules.Zero_intolerance.output.genes_filtered_file,
+        transcripts_filtered_file = rules.Zero_intolerance.output.transcripts_filtered_file
     output:
-        genes_normalized_count = ,
-        transcripts_normalized_counts = 
+        genes_normalized_file = Results + "Counts/{taxid}/genes_normalized.tsv",
+        transcripts_normalized_file = Results + "Counts/{taxid}/transcripts_normalized.tsv"
     conda:
         "envs/R.yaml"
     threads:

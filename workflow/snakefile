@@ -43,6 +43,7 @@ rule Metadata:
         "envs/entrez_direct.yaml"
     group:
         "Metadata"
+    threads:
         workflow.cores # Simultanous jobs causes issues
     shell:
         "esearch -db sra -query {params.sample} -email {params.email} | efetch -format runinfo > {output.metadata_file}"
@@ -267,19 +268,19 @@ rule Zero_intolerance:
     script:
         "scripts/zero_intolerance.R"
 
-"""
-Samples are normalized using the methodology from DEseq2. 
-"""
-rule Normalize:
-    input:
-        genes_filtered_counts = ,
-        transcripts_filtered_counts = 
-    output:
-        genes_normalized_count = ,
-        transcripts_normalized_counts = 
-    conda:
-        "envs/R.yaml"
-    threads:
-        1
-    script:
-        "scripts/normalize.R"
+# """
+# Samples are normalized using the methodology from DEseq2. 
+# """
+# rule Normalize:
+#     input:
+#         genes_filtered_counts = ,
+#         transcripts_filtered_counts = 
+#     output:
+#         genes_normalized_count = ,
+#         transcripts_normalized_counts = 
+#     conda:
+#         "envs/R.yaml"
+#     threads:
+#         1
+#     script:
+#         "scripts/normalize.R"

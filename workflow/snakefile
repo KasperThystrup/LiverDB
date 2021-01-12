@@ -22,15 +22,12 @@ with open (samples_files, 'r') as sample_read:
 [x for x in taxids if x.strip()]
 [x for x in samples if x.strip()]
 
-ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdump > Compress
-
+ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdump > Compress > Rsem_expression
 
 rule all:
     input:
-        rsem_genes = expand(Results + "Counts/{taxid}/{sample}_rsem.genes.results", taxid = taxids, sample = samples),
-        rsem_isoforms = expand(Results + "Counts/{taxid}/{sample}_rsem.isoforms.results", taxid = taxids, sample = samples),
-        sra_file = expand(Results + "Rawdata/SRA/{sample}.sra", sample = samples)
-
+        genes_filtered_counts = expand(Results + "Counts/{taxid}/genes_filtered.tsv", taxid = taxids),
+        transcripts_filtered_counts = expand(Results + "Counts/{taxid}/transcripts_filtered.tsv", taxid = taxids)
 
 """
 Sample file metadata are collected through Entrez-direct, by querying sample IDs against the sra database.
@@ -46,8 +43,7 @@ rule Metadata:
         "envs/entrez_direct.yaml"
     group:
         "Metadata"
-    threads:
-        workflow.cores
+        workflow.cores # Simultanous jobs causes issues
     shell:
         "esearch -db sra -query {params.sample} -email {params.email} | efetch -format runinfo > {output.metadata_file}"
 
@@ -66,6 +62,8 @@ rule Checkspecies:
         detected_species = Results + "Metadata/detectedSpecies.txt"
     group:
         "Genome"
+    threads:
+        1
     script:
         "scripts/checkspecies.R"
 
@@ -168,6 +166,7 @@ rule Fasterqdump:
         metadata_file = rules.Metadata.output.metadata_file,
         sra_file = rules.Srafetch.output.sra_file
     output:
+            fastq_tech = temp(Results + "Rawdata/Fastq/{sample}.fastq"),
             fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
             fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
     params:
@@ -177,7 +176,7 @@ rule Fasterqdump:
     group:
         "Samples"
     threads:
-        workflow.cores
+        workflow.cores  # Simultanous jobs may cause issues
     script:
         "scripts/fasterq_dump.py"
 
@@ -211,15 +210,18 @@ Gene and transcript quantifications are calculated using RSEM.
 rule Rsem_expression:
     input:
         metadata_file = rules.Metadata.output.metadata_file,
+        idx_dir = rules.Rsem_idx.output.idx_dir,
         fastq_1 = rules.Compress.output.fastq_1,
         fastq_2 = rules.Compress.output.fastq_2
     params:
         cmd = "rsem-calculate-expression",
-        idx_dir = rules.Rsem_idx.output.idx_dir,
         rsem_prefix = Results + "Counts/{taxid}/{sample}_rsem"
     output:
-        rsem_genes = Results + "Counts/{taxid}/{sample}_rsem.genes.results",
-        rsem_isoforms = Results + "Counts/{taxid}/{sample}_rsem.isoforms.results"        
+        rsem_prefix = directory(Results + "Counts/{taxid}/RSEM/{sample}_rsem"),
+        rsem_genes = Results + "Counts/{taxid}/RSEM/{sample}_rsem.genes.results",
+        rsem_isoforms = Results + "Counts/{taxid}/RSEM/{sample}_rsem.isoforms.results"
+    params:
+        rsem_idx = directory(rules.Rsem_idx.output.idx_dir)
     conda:
         "envs/rsem.yaml"
     group:
@@ -229,37 +231,55 @@ rule Rsem_expression:
     script:
         "scripts/rsem.py"
 
+"""
+Extract count values
+"""
+rule Extract_counts:
+    input:
+        rsem_genes = rules.Rsem_expression.output.rsem_genes,
+        rsem_isoforms = rules.Rsem_expression.output.rsem_isoforms
+    output:
+        genes_count_file = Results + "Counts/{taxid}/Samples/{sample}_genes.tsv",
+        transcripts_count_file = Results + "Counts/{taxid}/Samples/{sample}_transcripts.tsv"
+    threads:
+        1
+    shell:
+        "cut -f1,5 {input.rsem_genes} > {output.genes_count_file} && cut -f1,5 {input.rsem_isoforms} > {output.transcripts_count_file}"
 
-# """
-# Extract count values
-# """
-# rule Extract_counts:
-#     input:
-#         rsem_genes = rules.Rsem_expression.output.rsem_genes,
-#         rsem_isoforms = rules.Rsem_expression.rsem_isoforms
-#     output:
-#         genes_count_file = "Counts/{taxid}/{sample}_genes.tsv"
-#         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts.tsv"
 
+"""
+Merge count matrices and dismiss samples with zero contents which exceeds the threshold percentage.
+Samples which has an zero count average which exceeds the threshold set in config, will be sorted out.
+"""
+rule Zero_intolerance:
+    input:
+        genes_count_files = expand(rules.Extract_counts.output.genes_count_file, taxid = taxids, sample = samples),
+        transcripts_count_files = expand(rules.Extract_counts.output.transcripts_count_file, taxid = taxids, sample = samples)
+    params:
+        threshold = threshold
+    output:
+        genes_filtered_counts = Results + "Counts/{taxid}/genes_filtered.tsv",
+        transcripts_filtered_counts = Results + "Counts/{taxid}/transcripts_filtered.tsv"
+    conda:
+        "envs/R.yaml"
+    threads:
+        1
+    script:
+        "scripts/zero_intolerance.R"
 
-# """
-# Samples with high zero inflation could skewer the normalization.
-# Zero contents in the samples are screened for zero contents,
-# and samples with a higher zero contents than a set threshold are dismissed.
-# """
-# rule zero_intolerance:
-#     input:
-#         genes_count_file =  rules.Extract_counts.output.genes_count_file
-#         transcripts_count_file = rules.Extract_counts.output.transcripts_count_file
-#     output:
-#         genes_count_file = "Counts/{taxid}/{sample}_genes_filtered.tsv"
-#         transcripts_count_file = "Counts/{taxid}/{sample}_transcripts_filtered.tsv"
-#     params:
-#         threshold = threshold,
-#         threads = sub_threads
-#     conda:
-#         "envs/R.yaml"
-#     threads:
-#         max_threads
-#     script:
-#         "scripts/zero_intolerance.R"
+"""
+Samples are normalized using the methodology from DEseq2. 
+"""
+rule Normalize:
+    input:
+        genes_filtered_counts = ,
+        transcripts_filtered_counts = 
+    output:
+        genes_normalized_count = ,
+        transcripts_normalized_counts = 
+    conda:
+        "envs/R.yaml"
+    threads:
+        1
+    script:
+        "scripts/normalize.R"

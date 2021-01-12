@@ -2,10 +2,10 @@ from pandas import read_csv
 from snakemake import shell
 
 metadata_file = snakemake.input[0]
-fastq_1 = snakemake.input[1]
-fastq_2 = snakemake.input[2]
+idx_dir = snakemake.input[1]
+fastq_1 = snakemake.input[2]
+fastq_2 = snakemake.input[3]
 cmd = snakemake.params[0]
-idx_dir = snakemake.params[1]
 rsem_prefix = snakemake.params[2]
 rsem_genes = snakemake.output[0]
 rsem_isoforms = snakemake.output[1]
@@ -34,7 +34,7 @@ else:
 	layout_option = "--paired-end"
 	inputs = "%s %s" %(fastq_1, fastq_2)
 
-rsem = cdm + rsem_str %(layout_option, threads, inputs, idx_dir, rsem_prefix)
+rsem = cmd + rsem_str %(layout_option, threads, inputs, idx_dir, rsem_prefix)
 
 print("DEBUG:" + rsem)
 shell(rsem)

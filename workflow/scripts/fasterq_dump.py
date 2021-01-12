@@ -11,7 +11,8 @@ fastq_2 = snakemake.output[2]
 threads = snakemake.threads
 
 
-threads = min(10, threads)  ## More cores dirsupts the run 
+if threads > 10:
+	threads = 10  ## More cores dirsupts the run 
 meta = read_csv(metadata_file)
 
 layout = meta["LibraryLayout"][0]

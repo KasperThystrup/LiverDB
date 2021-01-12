@@ -183,7 +183,7 @@ rule Fasterqdump:
     group:
         "Samples"
     threads:
-        workflow.cores  # Simultanous jobs may cause issues
+        workflow.cores / parallel_processes # Simultanous jobs may cause issues
     script:
         "scripts/fasterq_dump.py"
 

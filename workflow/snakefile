@@ -25,10 +25,10 @@ with open (samples_files, 'r') as sample_read:
 ruleorder: Metadata > References > Decompress > Rsem_idx > Srafetch > Fasterqdump > Compress > Rsem_expression
 
 ## Cleanup
-try: 
-    shell("rm unpaired_samples.txt")
-except all:
-    print("unkown error.. Lazy developper: Please reconfigure try in snakefile [~line 31]!")
+# try: 
+#     shell("rm unpaired_samples.txt")
+# except all:
+#     print("unkown error.. Lazy developper: Please reconfigure try in snakefile [~line 31]!")
 
 rule all:
     input:

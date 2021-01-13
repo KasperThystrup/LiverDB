@@ -17,24 +17,23 @@ meta = read_csv(metadata_file)
 
 layout = meta["LibraryLayout"][0]
 
-fasterq_dump_str = " --force --split-files --temp %s --threads %s --outdir %s %s"
+fasterq_dump_str = " --force --split-3 --include-technical --temp %s --threads %s --outdir %s %s"
 
 temp_dir = dirname(fastq_1)
 
-dummy_com = ""  ##Debugg printing purposes
 if layout == "SINGLE":
-	dummy_com = " ; mv %s %s ; touch %s ; touch %s"
+	dummy_com = " ; mv %s %s ; touch %s ; echo discarded > %s"
 	fasterq_dump_str += dummy_com
-	fasterq_dump = cmd + fasterq_dump_str %(temp_dir, threads, temp_dir, sra_file, fastq, fastq_1, fastq, fastq_2)
+	fasterq_dump = cmd + fasterq_dump_str %(temp_dir, threads, temp_dir, sra_file, fastq, fastq_1, fastq_2, fastq)
 elif layout != "PAIRED":
 	exit("fasterq_dump: Layout type could not be interpreted; %s" %layout)
 else:
-	fasterq_dump = cmd + fasterq_dump_str %(temp_dir, threads, temp_dir, sra_file)
+	fasterq_dump_str += " ; echo discarded > %s "
+	fasterq_dump = cmd + fasterq_dump_str %(temp_dir, threads, temp_dir, sra_file, fastq)
 
 print("DEBUG:" + fasterq_dump)
 shell(fasterq_dump)
 
-print(layout, exists(fastq_1))
 if layout == "PAIRED" and not exists(fastq_1):
 	sample_id = basename(sra_file).replace("\.sra", "")
 	print("Paired end dataset:", id, "")

@@ -173,9 +173,9 @@ rule Fasterqdump:
         metadata_file = rules.Metadata.output.metadata_file,
         sra_file = rules.Srafetch.output.sra_file
     output:
-            fastq_tech = temp(Results + "Rawdata/Fastq/{sample}.fastq"),
-            fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
-            fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
+            fastq = temp(Results + "Rawdata/Fastq/{sample}.fastq"),
+            fastq_1 = temp(Results + "Rawdata/Fastq/{sample}_1.fastq"),
+            fastq_2 = temp(Results + "Rawdata/Fastq/{sample}_2.fastq")
     params:
             cmd = "fasterq-dump"
     conda:
@@ -218,13 +218,13 @@ rule Rsem_expression:
     input:
         metadata_file = rules.Metadata.output.metadata_file,
         idx_dir = rules.Rsem_idx.output.idx_dir,
-        fastq_1 = rules.Compress.output.fastq_1,
-        fastq_2 = rules.Compress.output.fastq_2
+        fastq_1 = rules.Fasterqdump.output.fastq_1,
+        fastq_2 = rules.Fasterqdump.output.fastq_2
     params:
         cmd = "rsem-calculate-expression",
         rsem_prefix = Results + "Counts/{taxid}/{sample}_rsem"
     output:
-        rsem_prefix = directory(Results + "Counts/{taxid}/RSEM/{sample}_rsem"),
+        # rsem_prefix = directory(Results + "Counts/{taxid}/RSEM/{sample}_rsem"),
         rsem_genes = Results + "Counts/{taxid}/RSEM/{sample}_rsem.genes.results",
         rsem_isoforms = Results + "Counts/{taxid}/RSEM/{sample}_rsem.isoforms.results"
     params:

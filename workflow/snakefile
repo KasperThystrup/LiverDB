@@ -165,6 +165,15 @@ rule Srafetch:
         "scripts/prefetch.py"
 
 
+rule intermediate_Fasterqdump:
+    output:
+        fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
+        fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
+    shell:
+        "touch {output.fastq_1} {output.fastq_2}"
+
+ruleorder: intermediate_Fasterqdump > Fasterqdump
+
 """
 SRA-tools Fasterq-dump are used to extract Read information into paired-end mate fastq files, enabling multithreaded processing.
 """
@@ -173,19 +182,48 @@ rule Fasterqdump:
         metadata_file = rules.Metadata.output.metadata_file,
         sra_file = rules.Srafetch.output.sra_file
     output:
-            fastq = temp(Results + "Rawdata/Fastq/{sample}.fastq"),
-            fastq_1 = temp(Results + "Rawdata/Fastq/{sample}_1.fastq"),
-            fastq_2 = temp(Results + "Rawdata/Fastq/{sample}_2.fastq")
+        fastq_1 = temp(rules.intermediate_Fasterqdump.output.fastq_1),
+        fastq_2 = temp(rules.intermediate_Fasterqdump.output.fastq_2),
     params:
-            cmd = "fasterq-dump"
+        cmd = "fasterq-dump"
     conda:
         "envs/sra_tools.yaml"
     group:
         "Samples"
     threads:
-        workflow.cores / parallel_processes # Simultanous jobs may cause issues
+        min(workflow.cores / parallel_processes, 10) # Simultanous jobs may cause issues
     script:
         "scripts/fasterq_dump.py"
+
+rule Checkpaired:
+    input:
+        all_fastq_1 = expand(rules.Fasterqdump.output.fastq_1, sample = samples),
+        all_fastq_2 = expand(rules.Fasterqdump.output.fastq_2, sample = samples)
+    output:
+        unpaired = temp(Results + "Rawdata/Fastq/unpaired.txt")
+    run:
+        for fastq_1 in input.all_fastq_1:
+
+            fastq_dir = dirname(fastq_1)
+            fastq = fastq_dir + basename(fastq_1).replace("_1.fastq", ".fastq")
+            fastq_2 = fastq_dir + basename(fastq_1).replace("_1.fastq", "_2.fastq")
+            msg = ""
+            sample_id = basename(sra_file).replace("\.sra", "")
+
+            if exists(fastq):
+                print("Warning, unintended file has been detected and will be removed: %s" %fastq)
+                shell("rm %s" %fastq)
+            if layout == "PAIRED" and (os.stat(fastq_1).st_size == 0):
+                msg += "WARNING: Read mate 1 of Paried end sample: %s is empty!\n" %sample_id
+            if layout == "PAIRED" and (os.stat(fastq_2).st_size == 0):
+                msg += "WARNING: Read mate 2 of Paried end sample: %s is empty!\n" %sample_id
+
+            if msg != "":
+                print(msg, "Sample will be omitted and recorded in %s" %unpaired)
+                omit = "echo %s >> %s " %(sample_id, unpaired)
+                shell(omit)
+            else:
+                shell("touch %s" %unpaired)
 
 
 """
@@ -219,12 +257,13 @@ rule Rsem_expression:
         metadata_file = rules.Metadata.output.metadata_file,
         idx_dir = rules.Rsem_idx.output.idx_dir,
         fastq_1 = rules.Fasterqdump.output.fastq_1,
-        fastq_2 = rules.Fasterqdump.output.fastq_2
+        fastq_2 = rules.Fasterqdump.output.fastq_2,
+        unpaired = rules.Checkpaired.output.unpaired
     params:
         cmd = "rsem-calculate-expression",
+        sample = "{sample}",
         rsem_prefix = Results + "Counts/{taxid}/{sample}_rsem"
     output:
-        # rsem_prefix = directory(Results + "Counts/{taxid}/RSEM/{sample}_rsem"),
         rsem_genes = Results + "Counts/{taxid}/RSEM/{sample}_rsem.genes.results",
         rsem_isoforms = Results + "Counts/{taxid}/RSEM/{sample}_rsem.isoforms.results"
     params:

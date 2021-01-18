@@ -4,7 +4,7 @@ samples: /disk3/Projects/21_001_LiverDB/samples.txt
 ensembl_release: 102
 compress: 1  # gz compression on fastq files, set to 0 to turn off (might speed up pipeline)
 ref_dir: /disk2/Resources/seqDB/ensembl/release-100/
-parallel_processes: 3 # This is used to guide how many process to split into, do not set to zero! (Do you want the destruction of all mankind on your shoulders?)
+parallel_processes: 5 # This is used to guide how many process to split into, do not set to zero! (Do you want the destruction of all mankind on your shoulders?)
 threshold: 0.75
 strandedness: no
 output_dir: /disk3/Projects/21_001_LiverDB/Results/

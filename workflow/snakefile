@@ -1,5 +1,5 @@
 from snakemake import shell
-configfile: "workflow/config/config.yaml" # Remember to direct to correct config file
+configfile: "workflow/config/dev_config.yaml" # Remember to direct to correct config file
 
 taxids_file = config["taxids"]
 with open (taxids_file, 'r') as tax_read:

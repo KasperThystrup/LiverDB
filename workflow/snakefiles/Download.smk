@@ -133,7 +133,7 @@ rule Srafetch:
     input:
         metadata_file = rules.Metadata.output.metadata_file
     output:
-        sra_file = Results + "Rawdata/SRA/{sample}.sra"
+        sra_file = temp(Results + "Rawdata/SRA/{sample}.sra")
     params:
         cmd = "prefetch"
     conda:
@@ -146,15 +146,6 @@ rule Srafetch:
         "../scripts/prefetch.py"
 
 
-rule intermediate_Fasterqdump:
-    output:
-        fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
-        fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
-    shell:
-        "touch {output.fastq_1} {output.fastq_2}"
-
-ruleorder: intermediate_Fasterqdump > Fasterqdump
-
 """
 SRA-tools Fasterq-dump are used to extract Read information into paired-end mate fastq files, enabling multithreaded processing.
 """
@@ -163,8 +154,8 @@ rule Fasterqdump:
         metadata_file = rules.Metadata.output.metadata_file,
         sra_file = rules.Srafetch.output.sra_file
     output:
-        fastq_1 = temp(rules.intermediate_Fasterqdump.output.fastq_1),
-        fastq_2 = temp(rules.intermediate_Fasterqdump.output.fastq_2),
+        fastq_1 = Results + "Rawdata/Fastq/{sample}_1.fastq",
+        fastq_2 = Results + "Rawdata/Fastq/{sample}_2.fastq"
     params:
         cmd = "fasterq-dump"
     conda:
